@@ -11,13 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130426184653) do
+ActiveRecord::Schema.define(:version => 20130426185534) do
 
   create_table "captchas", :force => true do |t|
     t.string   "client_ip"
     t.string   "secret"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "direct_messages", :force => true do |t|
+    t.integer  "from_user_id",      :null => false
+    t.integer  "to_user_id",        :null => false
+    t.string   "body"
+    t.integer  "parent_message_id", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "direct_messages", ["from_user_id"], :name => "index_direct_messages_on_from_user_id"
+  add_index "direct_messages", ["parent_message_id"], :name => "index_direct_messages_on_parent_message_id"
+  add_index "direct_messages", ["to_user_id"], :name => "index_direct_messages_on_to_user_id"
+
+  create_table "games", :force => true do |t|
+    t.integer  "player_white_id"
+    t.integer  "player_black_id"
+    t.integer  "winner_id"
+    t.integer  "current_player_id"
+    t.text     "board"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "secrets", :force => true do |t|
