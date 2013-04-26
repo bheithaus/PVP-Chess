@@ -1,0 +1,46 @@
+<h1>Welcome</h1>
+<div id="flash"></div>
+<div class="well span6">
+	<h1>
+  	<%= @unified_word %>
+	</h1>
+</div>
+
+<p> <%= @client_ip %></p>
+<label>
+	Enter this word to learn all my secrets
+	<input id="cap-field" type="text" placeholder="enter here">
+</label>
+<button id="cap">Try</button>
+
+
+<script>
+	$(function() {
+		console.log(window.location.origin);
+
+		$("#cap").on('click', function(){
+			var guess = $("#cap-field").val();
+			$.post(
+				"/guess",
+				{ guess: guess },
+				function (code) {
+				  window.location.assign(window.location.origin+"/secrets");
+				}
+			).fail(function(error) {
+				var flash = $('#flash');
+				console.log(error.responseText);
+				flash.html('<h4>'+$.parseJSON(error.responseText).error+'</h4>');
+				flash.fadeTo(500, 1.0, function() {
+					flash.fadeTo(3000, 0, function() {
+						flash.text("");
+					});
+				});
+
+
+			});
+
+		});
+	});
+
+
+</script>
