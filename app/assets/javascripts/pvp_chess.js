@@ -5,30 +5,24 @@ window.CH = {
 	Views: {},
 	Store: {},
 
-	init: function(rootEl) {
-		this.$rootEl = $(rootEl);
-
-
+	init: function($navbar, $content, currentUser) {
 		var that = this;
+		
+		CH.Store.currentUser = currentUser;
+		
+		
+		this.router = new CH.Routers.ChessRouter($content);
+		
+		Backbone.history.start();
 
-		if (this.Store.Secrets) {
-			showSecrets(this.Store.Secrets);
-		} else {
-			var secrets = new This.Collections.Secrets();
-			secrets.fetch(function() {
-				showSecrets(secrets);
-			});
-
-		}
+		that.makeNavbar($navbar);
 	},
-
-	showSecrets: function (data) {
-		var secretIndexView = new SecretIndexView({
-			collection: data
-		});
-
-
-		this.$rootEl.html(secretIndexView.render().$el);
+	
+	makeNavbar: function($navbar) {
+		var that = this;
+		
+		var navbarView = new CH.Views.Navbar(this.router);
+		
+		$navbar.html(navbarView.render().$el);
 	}
-
 };

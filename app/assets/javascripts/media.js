@@ -8,4 +8,4 @@ if (hasGetUserMedia()) {
   // Good to go!
 } else {
   alert('getUserMedia() is not supported in your browser');
-},
+}

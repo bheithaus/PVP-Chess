@@ -1,0 +1,28 @@
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner center">
+	   <a class="brand" href="#index">PvP Online Chess</a>
+	    <ul class="nav">
+			<% if ( CH.Store.currentUser ) { %>
+				<li class="#">
+					<a id="sign-out" href="#">Sign Out</a>
+				</li>
+			<% } else { %>
+				<li class="#">
+					<a id="sign-in-page" href='#signin'>Sign In</a>
+				</li>
+			<% } %>
+			<li class="#">
+				<a id='new-game' href='#/qists/new'>New Game</a>
+			</li>
+			<li class="#">
+				<a id='new-message' href='#/qists/new'>New Message</a>
+			</li>
+			<li class="#">
+				<a id='chat' href='#/qists/new'>Chat</a>
+			</li>
+			<li class="active">
+				<a id='home-button' href='#home'>Home</a>
+			</li>
+		</ul>
+	</div>
+</div>

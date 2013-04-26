@@ -1,5 +1,5 @@
 Capcap::Application.routes.draw do
-  root to: "static_pages#home"
+  root to: "static_pages#start_page"
 
   post '/guess' => 'static_pages#match_secret'
 
@@ -7,4 +7,6 @@ Capcap::Application.routes.draw do
   
   resources :games
   resources :direct_messages
+  
+  resource :session, only: [:show, :create, :destroy]
 end

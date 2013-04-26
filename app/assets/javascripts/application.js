@@ -15,7 +15,7 @@
 //= require backbone-rails
 //= require bootstrap
 //
-//= require capcap
+//= require pvp_chess
 //
 //= require_tree ./models
 //= require_tree ./collections

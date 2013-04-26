@@ -15,6 +15,10 @@ class StaticPagesController < ApplicationController
     end
     @unified_word = obfusc(word, 1)
   end
+  
+  def start_page
+    
+  end
 
   def match_secret
     client_ip = request.remote_ip

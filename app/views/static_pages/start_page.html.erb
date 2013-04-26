@@ -1,0 +1,15 @@
+<div id="navbar"></div>
+<div id="content"></div>
+
+<script>
+	$(function() {
+		var $navbar = $("#navbar");
+		var $content = $("#content");
+		var currentUser = <%= current_user.to_json.html_safe %>;
+		CH.init(
+			$navbar,
+			$content,
+			currentUser
+		);
+	});
+</script>
