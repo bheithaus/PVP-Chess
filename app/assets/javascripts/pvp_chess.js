@@ -5,10 +5,10 @@ window.CH = {
 	Views: {},
 	Store: {},
 
-	init: function($navbar, $content, currentUser) {
+	init: function($navbar, $content, currentUserData) {
 		var that = this;
 		
-		CH.Store.currentUser = currentUser;
+		CH.Store.currentUser = new CH.Models.User(currentUserData);
 		
 		
 		this.router = new CH.Routers.ChessRouter($content);

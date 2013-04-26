@@ -5,11 +5,11 @@
 	$(function() {
 		var $navbar = $("#navbar");
 		var $content = $("#content");
-		var currentUser = <%= current_user.to_json.html_safe %>;
+		var currentUserData = <%= current_user.to_json.html_safe %>;
 		CH.init(
 			$navbar,
 			$content,
-			currentUser
+			currentUserData
 		);
 	});
 </script>

@@ -15,9 +15,9 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	},
 	
 	home: function() {
-		var signInView = new CH.Views.SignIn();
+		var userLandingView = new CH.Views.userLanding();
 		
-		this.$content.html(signInView.render().$el);
+		this.$content.html(userLandingView.render().$el);
 	}
 	
 	
