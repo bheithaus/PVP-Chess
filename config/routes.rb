@@ -3,5 +3,8 @@ Capcap::Application.routes.draw do
 
   post '/guess' => 'static_pages#match_secret'
 
-  resources :secrets
+  resources :secrets, only: :index
+  
+  resources :games
+  resources :direct_messages
 end

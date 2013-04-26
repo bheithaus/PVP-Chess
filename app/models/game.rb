@@ -23,6 +23,27 @@ class Game < ActiveRecord::Base
     @board = new Array([nil] * 8)
   end
   
-  def move()
 
+  
+  def move(from, to)
+    #validate in bounds and valid move
+    self[to] = self[from]
+    self[from] = nil
+  end
+  
+  
+  
+  
+ private 
+  
+  def [](pos)
+    x, y = pos
+    
+    self.board[x][y]
+  end
+  
+  def []=(pos, value)
+    x, y = pos
+    self.board[x][y] = value
+  end
 end
