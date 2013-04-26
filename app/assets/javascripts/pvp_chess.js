@@ -1,4 +1,4 @@
-window.CC = {
+window.CH = {
 	Models: {},
 	Collections: {},
 	Routers: {},
