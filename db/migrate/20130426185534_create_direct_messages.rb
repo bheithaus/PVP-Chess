@@ -5,7 +5,7 @@ class CreateDirectMessages < ActiveRecord::Migration
       t.integer :to_user_id, null: false
       t.string :body
 
-      t.integer :parent_message_id, null: false
+      t.integer :parent_message_id
       
       t.timestamps
     end

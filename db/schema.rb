@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 20130426185534) do
     t.integer  "from_user_id",      :null => false
     t.integer  "to_user_id",        :null => false
     t.string   "body"
-    t.integer  "parent_message_id", :null => false
+    t.integer  "parent_message_id"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end

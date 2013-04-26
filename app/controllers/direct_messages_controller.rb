@@ -4,14 +4,14 @@ class DirectMessagesController < ApplicationController
   end
   
   def create
-    #create new message with params of from user
-    # route will specify to user
+    # create new message with params of from_id / or current_user.id
+    # route will specify to_id
     
   end
   
   def destroy
     #interesting question...might just keep all this data\
     
-    #allow user delete from their list
+    # then allow user delete from their list
   end
 end
