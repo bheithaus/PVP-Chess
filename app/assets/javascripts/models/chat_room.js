@@ -1,5 +1,6 @@
 CH.Models.ChatRoom = Backbone.RelationalModel.extend({
-	urlRoot: "/chatrooms"
+	urlRoot: "/chatrooms",
+	
 	relations: [{
 		type: "Backbone.HasMany",
 		key: "messages",

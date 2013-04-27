@@ -12,6 +12,13 @@ window.CH = {
 
 	init: function($navbar, $content, currentUserData) {
 		var that = this;
+		var pusher = new Pusher('2bfd0a96d75cfe730e81');
+		var channel = pusher.subscribe('my-channel');
+		
+		
+		channel.bind('my-event', function(data) {
+		  alert('An event was triggered with message: ' + data.message);
+		});
 		
 		CH.Store.currentUser = new CH.Models.User(currentUserData);
 		

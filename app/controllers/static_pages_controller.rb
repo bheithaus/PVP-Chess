@@ -2,7 +2,8 @@ class StaticPagesController < ApplicationController
   respond_to :json, :html
   include StaticPagesHelper
 
-  def home
+  def sign_up
+    
     choices = File.readlines("app/assets/images/dict.txt")
     word = choices[rand(choices.length)].chomp
     client_ip = request.remote_ip

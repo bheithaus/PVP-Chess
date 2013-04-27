@@ -5,7 +5,7 @@ CH.Views.Chat.Discussion = Backbone.View.extend({
 	
 	render: function() {
 		var renderedContent = JST["chat/discussion"]({
-			room: this.model
+			//room: this.model
 		});
 		this.$el.html(renderedContent);
 		
