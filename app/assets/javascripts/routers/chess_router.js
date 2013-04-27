@@ -4,7 +4,7 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	},
 	
 	before: function(route, params) {
-		console.log("running before function on route "+ route);
+		console.log("running before function on route " + route);
 		
 		if (this.currentView) {
 			this.currentView.remove();
