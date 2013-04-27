@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require backbone-rails
 //= require bootstrap
+//= require backbone.routefilter
 //
 //= require pvp_chess
 //

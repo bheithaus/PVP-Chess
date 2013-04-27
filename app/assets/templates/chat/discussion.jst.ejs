@@ -1,0 +1,15 @@
+<h1>Discussion in <%= room.escape("name") %></h1>
+<div class="discussion well">
+	<ul id="chat-discussion">
+		<%= room.get("messages").each(function(message) { %>
+			<li>
+				<button class="invite btn btn-xsmall" data-id="<%= message.escape("user_id") %>">
+					Invite
+				</button>
+				<%= message.escape("username") %>: 
+				<%= message.escape("text") %>
+			</li>
+		<% }); %>
+	</ul>
+</div>
+<%%>

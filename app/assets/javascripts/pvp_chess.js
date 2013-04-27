@@ -2,8 +2,13 @@ window.CH = {
 	Models: {},
 	Collections: {},
 	Routers: {},
-	Views: {},
-	Store: {},
+	Views: {
+		Chat: {},
+	},
+	Store: {
+		Chat: {}
+		
+	},
 
 	init: function($navbar, $content, currentUserData) {
 		var that = this;

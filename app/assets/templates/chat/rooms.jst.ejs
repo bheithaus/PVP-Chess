@@ -1,0 +1,11 @@
+<div id="chat-rooms">
+	<ul>
+		<% rooms.each(function(room) { %>
+			<li>
+				<a class="room" data-id="<%= room.escape("id") %>">
+					<%= room.escape("name") %>
+				</a>
+			</li>
+		<% }); %>
+	</ul>
+</div>

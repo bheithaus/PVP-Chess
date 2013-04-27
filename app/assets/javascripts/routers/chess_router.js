@@ -3,24 +3,30 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		this.$content = $content;
 	},
 	
+	before: function(route, params) {
+		console.log("running before function on route "+ route);
+		
+		if (this.currentView) {
+			this.currentView.remove();
+		}
+	},
+	
 	routes: {
 		"home": "home",
 		"signin": "signIn"
 	},
 	
-	signIn: function(){
-		var signInView = new CH.Views.SignIn();
+	signIn: function(){		
+		this.currentView = new CH.Views.SignIn();
 		
-		this.$content.html(signInView.render().$el);
+		this.$content.html(this.currentView.render().$el);
 	},
 	
-	home: function() {
-		var userLandingView = new CH.Views.UserLanding({
+	home: function() {	
+		this.currentView = new CH.Views.UserLanding({
 			model: CH.Store.currentUser
 		});
 		
-		this.$content.html(userLandingView.render().$el);
+		this.$content.html(this.currentView.render().$el);
 	}
-	
-	
 });

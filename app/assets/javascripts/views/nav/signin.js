@@ -18,7 +18,7 @@ CH.Views.SignIn = Backbone.View.extend({
 			{ username: username },
 			function(signedInUser) {
 				console.log(signedInUser);
-				CH.Store.currentUser = signedInUser;
+				CH.Store.currentUser = new CH.Models.User(signedInUser);
 				Backbone.history.navigate("home", {trigger: true});
 			}
 		);
