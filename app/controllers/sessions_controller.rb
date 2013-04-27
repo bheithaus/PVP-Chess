@@ -9,11 +9,12 @@ class SessionsController < ApplicationController
   
   respond_to :json, :html
   
-  def new  
+  def new
+
   end
   
   def create
-    Pusher['my-channel'].trigger('my-event', {:message => 'hello world'})
+    Pusher['my-channel'].trigger('my-event', message: 'hello world')
     
     @user = User.find_by_username(params[:username])
     
