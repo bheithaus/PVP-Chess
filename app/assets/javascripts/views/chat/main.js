@@ -16,7 +16,7 @@ CH.Views.Chat.Main = Backbone.View.extend({
 	
 	initialize: function() {
 		var that = this;
-		that.currentRooms = QS.Store.Chat.currentRooms;
+		that.currentRooms = CH.Store.Chat.currentRooms;
 		
 		that.$discussionArea = $("<div id='discussion-area'></div>");
 		
