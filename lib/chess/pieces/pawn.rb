@@ -30,7 +30,7 @@ class Pawn < Piece
     forward_deltas = [ [forward, 0] ]
     return [] if blocked?(add_delta(self.pos, forward_deltas[0]))
     
-    if ( @first_move )
+    if ( @first_move && !blocked?(add_delta(self.pos, [2*forward, 0])))
       forward_deltas << [2*forward, 0]
     end
     
@@ -57,14 +57,6 @@ class Pawn < Piece
   
   def enemy_in_attack_zone?(corner)
     in_bounds?(corner) && piece_at(corner) != nil && piece_at(corner).color != self.color
-  end
-  
-  def add_delta(position, delta)
-    pos = position.dup
-    pos[0] += delta[0]
-    pos[1] += delta[1]
-    
-    pos
   end
   
   def dup(dupped_board)

@@ -2,7 +2,7 @@
 
 class Knight < Piece
 
-  def possible_moves
+  def possible_deltas
     [
      [1,2],
      [2,1],
@@ -17,7 +17,9 @@ class Knight < Piece
 
   def moves
     moves = []
-    possible_moves.each do |move|
+    possible_deltas.each do |delta|
+      move = add_delta(self.pos, delta)
+      
       if in_bounds?(move) && enemy_or_empty?(move)
         moves << move
       end

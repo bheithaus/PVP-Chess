@@ -39,4 +39,12 @@ class Piece
     
     self.board[x][y] = value
   end
+  
+  def add_delta(position, delta)
+    pos = position.dup
+    pos[0] += delta[0]
+    pos[1] += delta[1]
+    
+    pos
+  end
 end

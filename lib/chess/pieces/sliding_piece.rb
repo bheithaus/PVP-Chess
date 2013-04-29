@@ -18,16 +18,14 @@ class SlidingPiece < Piece
   end
   
   def directions
-    #overwrite me
     raise "NotYetImplementedError"
   end
   
   def moves
     moves = []
-    here = self.pos
     directions.each do |direction|
       distance = 1
-      new_move = grow direction, distance
+      new_move = add_delta(self.pos, grow(direction, distance))
       while in_bounds?(new_move) && distance <= range do
         if free_path_to?(new_move)
           moves << new_move
@@ -38,13 +36,15 @@ class SlidingPiece < Piece
           break
         end
         distance += 1
+        new_move = add_delta(self.pos, grow(direction, distance))
       end
     end
-
+    
     moves
   end
   
-  def grow(direction, i)    
+  def grow(dir, i)
+    direction = dir.dup
     direction[0] = direction[0] * i
     direction[1] = direction[1] * i 
     

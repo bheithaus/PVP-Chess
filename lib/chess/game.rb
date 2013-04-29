@@ -11,23 +11,49 @@ require 'debugger'
 #how to load a whole folder?
 
 class Game
-  attr_reader :board
+  attr_reader :board, :player_white_id, :player_black_id
   
-  def initialize
+  def initialize(params = {})
+    options = {
+      player_white_id: 1,
+      player_black_id: 2
+    }.merge(params)
+    @player_white_id = options[:player_white_id]
+    @player_black_id = options[:player_black_id]
+    @turn = @player_white_id
     @board = Board.new(self)
   end
+  
+  def make_move(from, to)
+    p from
+    raise "not your turn" unless correct_turn?(from)
+    
+    board.take_turn(from, to)
+    
+    if board.game_over?(to)
+      raise "check mate!"
+    end
+    
+    next_turn
+  end
 
+  def next_turn
+    @turn = @turn == @player_white_id ? @player_black_id : @player_white_id
+  end
+    
+  def correct_turn?(from)
+    color = board.piece_at(from).color
+    
+    self.send("player_#{color}_id") == @turn
+  end
 end
-
 
 class Board
   attr_accessor :game, :board,
                 :white_team, :white_king,
                 :black_team, :black_king
   
-  def initialize(game,  options = {})
-    # @player_white_id = options.try(player_white_id)
-#     @player_black_id = options.try(player_black_id) 
+  def initialize(game)
     
     @game = game
     @board = make_board
@@ -51,15 +77,16 @@ class Board
   
   def take_turn(from, to)
     can_move = piece_at(from).valid_move?(to)
-    p can_move
     if can_move
-      not_in_check = self.valid_move?(from, to)
+      putting_self_in_check = self.putting_self_in_check?(from, to)
     end
     
-    if can_move && not_in_check
+    if can_move && !putting_self_in_check
       puts "making a real move"
       move_piece(from, to)
     elsif can_move
+      puts "mover -- #{piece_at(from).color} #{piece_at(from).class}"
+      
       raise "you can't put yourself in check"
     else
       puts "from #{from}"
@@ -93,15 +120,18 @@ class Board
     dupped_board
 	end
   
-	def valid_move?(from, to)
+  def opposite_color(piece) 
+    piece.color == :white ? :black : :white
+  end
+  
+	def putting_self_in_check?(from, to)
     mover = self[from]
-    offense = self.send("#{mover.color}_team")
-    opposite_color = mover.color == :white ? :black : :white
-    defense_king = self.send("#{opposite_color}_king")
+    offense = self.send("#{opposite_color(mover)}_team")
+    defense_king = self.send("#{mover.color}_king")
 		d_board = dup
 		moved_piece = move_piece(from, to, d_board)
     
-		!in_check?(offense, defense_king, moved_piece, d_board)
+		in_check?(offense, defense_king, moved_piece, d_board)
 	end
   
 	def in_check?(offense, defense_king, moved_piece, board = @board)
@@ -117,6 +147,36 @@ class Board
 
 		false
 	end
+  
+  def game_over?(last_moved_to_pos)
+    mover = piece_at(last_moved_to_pos)
+    offense = self.send("#{mover.color}_team")
+    defense_king = self.send("#{opposite_color(mover)}_king")
+    
+    if in_check?(offense, defense_king, mover)
+      puts "testing for check_mate"
+      
+      return true if check_mate?(defense_king)
+    end
+    
+    false
+  end
+  
+  def check_mate?(in_check_king)
+    defense_team = self.send("#{in_check_king.color}_team")
+    offense = self.send("#{opposite_color(in_check_king)}_team")
+    
+    defense_team.each do |piece|
+      piece.moves.each do |move|
+        d_board = dup
+    		moved_piece = move_piece(piece.pos, move, d_board) unless in_check_king == piece
+    
+    		return false unless in_check?(offense, in_check_king, moved_piece, d_board)
+      end
+    end
+    
+    true
+  end
   
   def print_team(team)
     team.each do |piece|
@@ -148,13 +208,12 @@ class Board
       [1,6].each { |col| self[row, col] = Knight.new(@board, color, [row, col]); self.send(team) << self[row, col]; }
       [2,5].each { |col| self[row, col] = Bishop.new(@board, color, [row, col]); self.send(team) << self[row, col]; }
       
-      queen_pos = row == 0 ? 3 : 4
-      king_pos = row == 0 ? 4 : 3
-      self[row, king_pos] = King.new(@board, color, [row, king_pos])
-      self.send(team) << self[row, king_pos]
-      self.send("#{king}=", self[row, king_pos])
-      self[row, queen_pos] = Queen.new(@board, color, [row, queen_pos])
-      self.send(team) << self[row, queen_pos]
+      self[row, 3] = King.new(@board, color, [row, 3])
+      self.send(team) << self[row, 3]
+      self.send("#{king}=", self[row, 3])
+      
+      self[row, 4] = Queen.new(@board, color, [row, 4])
+      self.send(team) << self[row, 4]
     end
   end
   
@@ -191,33 +250,23 @@ class Board
   end
 end
 
-
 def t
   chess = Game.new
   chess.board.print
   puts chess.board[1,0].render
-  chess.board.take_turn([1,0],[2,0])
-  chess.board.print
-  sleep(2)
   
-  chess.board.take_turn([6,0],[4,0])
+  chess.make_move([1,3],[3,3])
   chess.board.print
-  sleep(2)
   
-  chess.board.take_turn([2,0],[3,0])
+  chess.make_move([6,2],[4,2])
   chess.board.print
-  sleep(2)
-  
-  chess.board.take_turn([6,1],[4,1])
+
+  chess.make_move([3,3],[4,2])
   chess.board.print
-  sleep(2)
   
-  chess.board.take_turn([1,5],[3,5])
+  chess.make_move([6,1],[4,1])
   chess.board.print
-  sleep(2)
   
-  chess.board.take_turn([6,7],[5,7])
+  chess.make_move([0,4],[4,0])
   chess.board.print
-  sleep(2)
-  
 end
