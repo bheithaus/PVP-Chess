@@ -23,36 +23,43 @@ class SlidingPiece < Piece
   end
   
   def moves
+    moves = []
     here = self.pos
+    puts "I am a #{self.color} #{self.class}"
+    puts "#{range} is my range"
     directions.each do |direction|
-      i = 1
-      new_move = grow direction, i 
-      while @game.in_bounds?(new_move) && i <= range do
+      distance = 1
+      new_move = grow direction, distance
+      puts direction
+      puts distance
+      while self.board.in_bounds?(new_move) && distance <= range do
         if free_path_to?(new_move)
-          moves += new_move
+          moves << new_move
         elsif take_opponent?(new_move)
-          moves += new_move
+          moves << new_move
+          break
+        else
           break
         end
-        i += 1
+        distance += 1
       end
     end
 
     moves
   end
   
-  def grow(direction)
-    direction[1] = direction[1] * i
-    direction[2] = direction[2] * i 
+  def grow(direction, i)    
+    direction[0] = direction[0] * i
+    direction[1] = direction[1] * i 
     
     direction
   end  
   
   def free_path_to?(pos)
-    self.game[pos] == null
+    self.board[pos] == nil
   end
   
   def take_opponent?(pos)
-    self.game[pos].color != self.color
+    self.board[pos].color != self.color
   end
 end

@@ -6,6 +6,7 @@ require_relative 'pieces/queen'
 require_relative 'pieces/king'
 require_relative 'pieces/rook'
 require_relative 'pieces/knight'
+require 'debugger'
 
 #how to load a whole folder?
 
@@ -45,10 +46,24 @@ class Board
   end
   
   def take_turn(from, to)
-    if in_bounds?(to) && valid_move?(from, to)
-    #validate in bounds and valid move
-      move_piece(from, to)
+    can_move = piece_at(from).valid_move?(to)
+    if can_move
+      not_in_check = self.valid_move?(from, to)
     end
+    
+    if can_move && not_in_check
+      move_piece(from, to)
+    elsif can_move
+      raise "you can't put yourself in check"
+    else
+      puts "from #{from}"
+      puts "to #{to}"
+      raise "that move is not included in #{piece_at(from).color} #{piece_at(from).class}'s moves"
+    end
+  end
+  
+  def piece_at(pos)
+    self[pos]
   end
   
   def make_board
@@ -75,17 +90,21 @@ class Board
 	def valid_move?(from, to)
     mover = self[*from]
     offense = self.send("#{mover.color}_team")
-    opposite_color = mover.color == :white ? :black : :white 
+    opposite_color = mover.color == :white ? :black : :white
     defense_king = self.send("#{opposite_color}_king")
 		d_board = dup
 		move_piece(from, to, d_board)
+    
 		!in_check?(offense, defense_king, d_board)
 	end
   
 	def in_check?(offense, defense_king, board = @board)
+
 		king_pos = defense_king.pos
+    p offense
 		offense.each do |piece|
-		  puts "#{piece} piece"
+      puts piece.class
+      puts piece.moves
 			piece.moves.each do |move|
 				return true if move == king_pos
 			end
@@ -103,6 +122,13 @@ class Board
         self[row, col] = Pawn.new(self, color, [row, col])
         self.send(team) << self[row, col]
       end
+    end
+  end
+  
+  def print_team(team)
+    team.each do |piece|
+      puts "#{piece.color} #{piece.class}"
+      puts piece.render
     end
   end
   
@@ -129,8 +155,8 @@ class Board
   end
   
   #debugging
-  def print
-    self.board.each do |row|
+  def print(board = @board)
+    board.each do |row|
       line =""
       row.each do |sq|
         unless sq.nil?
@@ -141,29 +167,34 @@ class Board
       end
       puts line
     end
+    
+    nil
   end
   
   def in_bounds?(pos)
     pos.all? { |x| (0...8).include?(x) }  
   end
   
-  def [](*pos)
-    x, y = pos
-    
+  def [](pos1, pos2=false)
+    x, y = pos2 ? [pos1, pos2] : pos1
+   
     self.board[x][y]
   end
   
-  def []=(*pos, value)
-    x, y = pos
+  def []=(pos1, pos2 = false, value)
+    x, y = pos2 ? [pos1, pos2] : pos1
     self.board[x][y] = value
   end
 end
 
 
-def test
+def t
   chess = Game.new
   chess.board.print
-  chess.board.move([1,0],[2,0])
+  puts chess.board[1,0].render
+  p chess.board[2,0]
+  #sleep(5)
+  chess.board.take_turn([1,0],[2,0])
   chess.board.print
   
   

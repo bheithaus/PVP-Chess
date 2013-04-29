@@ -6,7 +6,11 @@ class Piece
   end
 
   def moves
-    #overwrite!
+    raise "moves in Piece not implemented "
+  end
+  
+  def valid_move?(to)
+    moves.include?(to)
   end
   
 	def render
