@@ -193,7 +193,6 @@ def t
   chess.board.print
   puts chess.board[1,0].render
   p chess.board[2,0]
-  #sleep(5)
   chess.board.take_turn([1,0],[2,0])
   chess.board.print
   
