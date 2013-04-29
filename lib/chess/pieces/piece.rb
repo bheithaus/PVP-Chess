@@ -10,7 +10,8 @@ class Piece
   end
   
   def valid_move?(to)
-    moves.include?(to)
+    my_moves = self.moves
+    my_moves.include?(to)
   end
   
 	def render
@@ -18,7 +19,24 @@ class Piece
 		symbol[color]
 	end
   
+  def in_bounds?(pos)
+    pos.all? { |x| (0...8).include?(x) }  
+  end
+  
   def dup(dupped_board)
     self.class.new(dupped_board, @color, @pos)
+  end
+  
+  #convience
+  def piece_at(pos)
+    x, y = pos
+   
+    self.board[x][y]
+  end
+  
+  def piece_at=(pos, value)
+    x, y = pos
+    
+    self.board[x][y] = value
   end
 end

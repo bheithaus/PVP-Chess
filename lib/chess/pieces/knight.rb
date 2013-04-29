@@ -18,7 +18,7 @@ class Knight < Piece
   def moves
     moves = []
     possible_moves.each do |move|
-      if self.board.in_bounds?(move) && enemy_or_empty?(move)
+      if in_bounds?(move) && enemy_or_empty?(move)
         moves << move
       end
     end
@@ -27,7 +27,7 @@ class Knight < Piece
   end
   
   def enemy_or_empty?(pos)
-    self.board[pos] == nil || self.board[pos].color != self.color
+    piece_at(pos) == nil || piece_at(pos).color != self.color
   end
 
   def symbol
