@@ -19,9 +19,12 @@ window.CH = {
 		// channel.bind('my-event', function(data) {
 // 		  alert('An event was triggered with message: ' + data.message);
 // 		});
-		
-		CH.Store.currentUser = new CH.Models.User(currentUserData);
-		
+
+		if (currentUserData) {
+			CH.Store.currentUser = new CH.Models.User(currentUserData);
+		} else {
+			console.log('yer not signed in');
+		}
 		
 		this.router = new CH.Routers.ChessRouter($content);
 		

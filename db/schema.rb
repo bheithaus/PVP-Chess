@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130429204504) do
+ActiveRecord::Schema.define(:version => 20130429203855) do
 
   create_table "captchas", :force => true do |t|
     t.string   "client_ip"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20130429204504) do
 
   create_table "online_games", :force => true do |t|
     t.integer  "player_white_id"
-    t.integer  "black_black_id"
+    t.integer  "player_black_id"
     t.integer  "turn"
     t.text     "board"
     t.datetime "created_at",      :null => false

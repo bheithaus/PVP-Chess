@@ -1,7 +1,7 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner center">
 	   <a class="brand" href="#index">PvP Online Chess</a>
-	    <ul class="nav">
+	    <ul class="nav" id="navvy">
 			<% if ( CH.Store.currentUser ) { %>
 				<li class="#">
 					<a id="sign-out" href="#">Sign Out</a>
@@ -12,7 +12,7 @@
 				</li>
 			<% } %>
 			<li class="#">
-				<a id='new-game' href='#/qists/new'>New Game</a>
+				<a id='new-game' href='#/game'>Chess</a>
 			</li>
 			<li class="#">
 				<a id='new-message' href='#/qists/new'>New Message</a>

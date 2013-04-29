@@ -1,9 +1,15 @@
-require './pieces/piece.rb'
-require './pieces/sliding_piece.rb'
+require "#{Dir.pwd}/lib/chess/pieces/piece.rb"
+require "#{Dir.pwd}/lib/chess/pieces/sliding_piece.rb"
+require "#{Dir.pwd}/lib/chess/pieces/pawn.rb"
+require "#{Dir.pwd}/lib/chess/pieces/rook.rb"
+require "#{Dir.pwd}/lib/chess/pieces/queen.rb"
+require "#{Dir.pwd}/lib/chess/pieces/bishop.rb"
+require "#{Dir.pwd}/lib/chess/pieces/king.rb"
+require "#{Dir.pwd}/lib/chess/pieces/knight.rb"
+
+
 Dir.glob('./pieces/*')  { |file| require file }
 require 'active_support/inflector'
-
-require 'debugger'
 
 #how to load a whole folder?
 
