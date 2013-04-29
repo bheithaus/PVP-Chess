@@ -1,11 +1,8 @@
-require_relative 'pieces/piece'
-require_relative 'pieces/sliding_piece'
-require_relative 'pieces/pawn'
-require_relative 'pieces/bishop'
-require_relative 'pieces/queen'
-require_relative 'pieces/king'
-require_relative 'pieces/rook'
-require_relative 'pieces/knight'
+require './pieces/piece.rb'
+require './pieces/sliding_piece.rb'
+Dir.glob('./pieces/*')  { |file| require file }
+require 'active_support/inflector'
+
 require 'debugger'
 
 #how to load a whole folder?
@@ -29,6 +26,8 @@ class Game
     raise "not your turn" unless correct_turn?(from)
     
     board.take_turn(from, to)
+    
+    board.print
     
     if board.game_over?(to)
       raise "check mate!"
@@ -111,12 +110,12 @@ class Board
   
 	def dup
 		dupped_board = make_board
-    @board.each_with_index do |row, i|
+    self.board.each_with_index do |row, i|
       row.each_with_index do |piece, j|
         dupped_board[i][j] = piece.nil? ? nil : piece.dup(dupped_board)
       end
     end
-        
+
     dupped_board
 	end
   
@@ -166,11 +165,13 @@ class Board
     defense_team = self.send("#{in_check_king.color}_team")
     offense = self.send("#{opposite_color(in_check_king)}_team")
     
-    defense_team.each do |piece|
+    defense_team.each do |piece|      
       piece.moves.each do |move|
         d_board = dup
     		moved_piece = move_piece(piece.pos, move, d_board) unless in_check_king == piece
-    
+        
+        puts "in check?"
+        puts in_check?(offense, in_check_king, moved_piece, d_board)
     		return false unless in_check?(offense, in_check_king, moved_piece, d_board)
       end
     end
@@ -199,9 +200,9 @@ class Board
   def install_others
     [0, 7].each do |row|
       if row == 0
-        color, team, king = :white, :white_team, :white_king
+        color, team = :white, :white_team
       else
-        color, team, king = :black, :black_team, :black_king
+        color, team = :black, :black_team
       end
       
       [0,7].each { |col| self[row, col] = Rook.new(@board, color, [row, col]); self.send(team) << self[row, col]; }
@@ -210,7 +211,7 @@ class Board
       
       self[row, 3] = King.new(@board, color, [row, 3])
       self.send(team) << self[row, 3]
-      self.send("#{king}=", self[row, 3])
+      self.send("#{color}_king=", self[row, 3])
       
       self[row, 4] = Queen.new(@board, color, [row, 4])
       self.send(team) << self[row, 4]
@@ -220,7 +221,7 @@ class Board
   #debugging
   def print(board = @board)
     board.each do |row|
-      line =""
+      line = ""
       row.each do |sq|
         unless sq.nil?
           line << " #{sq.render} "
@@ -232,6 +233,71 @@ class Board
     end
     
     nil
+  end
+  
+  PIECE_TRANSLATIONS = {
+    Pawn: "P",
+    Rook: "R",
+    Bishop: "B",
+    Queen: "Q",
+    King: "K",
+    Knight: "H"
+  }
+  
+  def to_text
+    board_as_text = ""
+    @board.each do |row|
+      row.each do |sq|
+        if sq.nil? 
+          board_as_text << "_,"
+        else
+          color = sq.color == :white ? "w" : "b" unless sq.nil?
+          board_as_text << "#{color}#{PIECE_TRANSLATIONS["#{sq.class}".to_sym]},"
+        end
+      end
+        board_as_text << "|"
+    end
+    
+    board_as_text
+  end
+  
+  def load_board(board_as_text)
+    piece_loader = PIECE_TRANSLATIONS.invert
+
+    #reset! danger!!!    
+    self.board = make_board
+    self.white_team = []
+    self.black_team = []
+    row_strings = board_as_text.split("|") 
+    
+    row_strings.each_with_index do |row_string, row|
+      row_string.split(",").each_with_index do |str, col|
+        if str == "_"
+          self[row, col] = nil
+        else
+          color, type = str.split("")
+          cls = piece_loader[type].to_s.constantize
+          color = color == "w" ? :white : :black
+          
+          #load pieces!
+          case type
+          when "P"
+            first_move = [[:white, 1], [:black, 6]].include?([color, row]) ? true : false
+            self[row, col] = cls.new(@board, color, [row, col], first_move)
+            self.send("#{color}_team") << self[row, col]
+          when "K"
+            self[row, col] = cls.new(@board, color, [row, col])
+            self.send("#{color}_team") << self[row, col]
+            self.send("#{color}_king=", self[row, col])
+          else
+            self[row, col] = cls.new(@board, color, [row, col])
+            self.send("#{color}_team") << self[row, col]
+          end
+        end
+      end
+    end
+      
+    row_strings
   end
   
   def in_bounds?(pos)
@@ -256,17 +322,15 @@ def t
   puts chess.board[1,0].render
   
   chess.make_move([1,3],[3,3])
-  chess.board.print
   
   chess.make_move([6,2],[4,2])
-  chess.board.print
 
   chess.make_move([3,3],[4,2])
-  chess.board.print
+  
+  puts "serializing and loading!"
+  chess.board.load_board(chess.board.to_text)
   
   chess.make_move([6,1],[4,1])
-  chess.board.print
   
   chess.make_move([0,4],[4,0])
-  chess.board.print
 end

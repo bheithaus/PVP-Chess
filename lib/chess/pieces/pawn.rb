@@ -38,6 +38,7 @@ class Pawn < Piece
   end
   
   def blocked?(pos)
+    Board.
     return false unless self.piece_at(pos)
     
     true

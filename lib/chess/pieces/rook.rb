@@ -12,4 +12,10 @@ class Rook < SlidingPiece
 	def symbol
 		["♖", "♜"]
 	end
+  
+  def as_text
+    color = self.color == :white ? "w" : "b"
+    
+    "#{color}r"
+  end
 end
