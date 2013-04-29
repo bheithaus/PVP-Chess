@@ -1,9 +1,10 @@
-class GamesController < ApplicationController
+class OnlineGamesController < ApplicationController
   def show
     #pass game to client
   end
   
   def create
+    
     # make new board with player_white_id and player_black_id
     
     # save and give back to client
