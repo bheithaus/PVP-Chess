@@ -1,4 +1,9 @@
 CH.Models.Game = Backbone.RelationalModel.extend({
+	initialize: function(data) {
+		this.player_white_id = data.player_white_id;
+		this.player_black_id = data.player_black_id;
+	},
+	
 	urlRoot: "/online_games",
 	
 	parse: function(data, options) {
@@ -11,14 +16,17 @@ CH.Models.Game = Backbone.RelationalModel.extend({
 	},
 	
 	toJSON: function() {
-		return { move: {from: this.from, to: this.to} };
+		return { move: {from: this.from, to: this.to},
+				online_game: {
+					player_white_id: this.player_white_id,
+					player_black_id: this.player_black_id
+				}
+		};
 	},
 	
 	parse_board: function(board) {
 		var parsed_board, board_str, board_strs;
 		board_str = board;
-		console.log(board_str);
-		console.log(typeof(board_str));
 		board_strs = board_str.split("|");
 		parsed_board = [];
 		

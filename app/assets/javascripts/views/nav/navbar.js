@@ -28,12 +28,12 @@ CH.Views.Navbar = Backbone.View.extend({
 	
 	signOut: function() {
 		$.post(
-			"/session",
+			"/users/sign_out",
 			{ _method: "DELETE" },
 			function(signedout) {
 				console.log(signedout);
 				CH.Store.currentUser = null;
-				Backbone.history.navigate("signin", {trigger: true});
+				window.location.reload();
 			}
 		);
 		

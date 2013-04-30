@@ -4,10 +4,15 @@ CH.Views.Game = Backbone.View.extend({
 		that.newGame = new CH.Models.Game({
 			player_white_id: CH.Store.currentUser.id
 		});
-		
 		that.newGameButton = new CH.Views.NewGame({
 			model: that.newGame
 		});
+		
+		if (that.model) {
+			this.playGame({
+				model: that.model
+			});
+		}
 	},
 	
 	events: {
@@ -40,11 +45,15 @@ CH.Views.Game = Backbone.View.extend({
 		this.render();
 	},
 	
-	playGame: function(event) {
-		var game = this.collection.findWhere({
-			id: $(event.target).data("game-id")
-		})
-		console.log($(event.target).data("game-id"))
+	playGame: function(options) {
+		var game;
+		if (options.target) {
+			game = this.collection.findWhere({
+				id: $(event.target).data("game-id")
+			});
+		} else {
+			game = options.model;
+		}
 		
 		this.currentView = new CH.Views.PlayGame({
 			model: game,

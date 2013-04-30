@@ -32,7 +32,9 @@ class OnlineGame < ActiveRecord::Base
     end
     
     def board_to_text
-      self.board = @game.board.to_text
-      self.turn = @turn
+      if persisted?
+        self.board = @game.board.to_text
+        self.turn = @turn
+      end
     end
 end

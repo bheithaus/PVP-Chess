@@ -5,6 +5,9 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	
 	before: function(route, params) {
 		console.log("running before function on route " + route);
+		// if (!CH.Store.currentUser) {
+	// 		Backbone.history.navigate("/users/sign_in", { trigger: true })
+	// 	}
 		
 		if (this.currentView) {
 			this.currentView.remove();
@@ -15,12 +18,19 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		"home": "home",
 		"signin": "signIn",
 		"players": "usersIndex",
-		"game": "game"
+		"games": "game",
+		"games/:id": "game"
 	},
 	
-	game: function() {
+	game: function(id) {
+		console.log(id);
+		var gamesView;
+		var game = CH.Store.currentUser.get("games").findWhere({id: parseInt(id)}) || null;
+
+
 		this.currentView = new CH.Views.Game({
-			collection: CH.Store.currentUser.get("games")
+			collection: CH.Store.currentUser.get("games"),
+			model: game
 		});
 		
 		this.$content.html(this.currentView.render().$el);

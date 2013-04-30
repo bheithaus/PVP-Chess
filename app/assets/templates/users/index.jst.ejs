@@ -1,11 +1,17 @@
-
-<ul>
+<h1>Users</h1>
+<ul style="list-style:none;">
 
 <% users.each(function (user) { %>
+	<% if (user.id != CH.Store.currentUser.id) { %>
 	<li>
-		<%= user.escape("fullName") %>
-		<%= user.escape("username") %>
+		<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+		<%= user.escape("email") %>
+		<% if (CH.Store.onlineUsers.indexOf(user.get("id").toString()) != -1 ) { %>
+			<span class="blue"><i class="icon-globe"></i></span>
+		<% } %>
 	</li>
+	<% } %>
+	
 <% }); %>
 
 </ul>

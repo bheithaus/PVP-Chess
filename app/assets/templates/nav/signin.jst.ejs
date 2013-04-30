@@ -4,5 +4,9 @@
 		<input type="text" id="username" placeholder="username">
 	</label>
 	
+	
 	<button id="signin">Sign In</button>
+	
+	<a "Sign in with #{provider.to_s.titleize}", omniauth_authorize_path(resource_name, provider) %>
+	
 </div>

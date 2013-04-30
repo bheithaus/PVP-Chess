@@ -6,6 +6,7 @@ Capcap::Application.routes.draw do
   root to: "static_pages#start_page"
   
   post '/guess' => 'static_pages#match_secret'
+  post '/pusher/auth' => 'pusher#auth'
   
   resources :online_games
   
