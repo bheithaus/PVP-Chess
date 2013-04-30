@@ -6,6 +6,9 @@ class ApplicationController < ActionController::Base
   private 
   
   def signed_in?
-    redirect_to new_user_session_url unless user_signed_in? || self.class == Devise::SessionsController || self.class == Devise::RegistrationsController
+    redirect_to new_user_session_url unless user_signed_in? ||
+                                            self.class == Devise::SessionsController ||
+                                            self.class == Devise::RegistrationsController ||
+                                            self.class == Users::OmniauthCallbacksController
   end
 end

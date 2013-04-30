@@ -58,5 +58,15 @@ window.CH = {
 		var navbarView = new CH.Views.Navbar(this.router);
 		
 		$navbar.html(navbarView.render().$el);
-	}
+	},
+	
+	getCursorPosition: function(canvas, event) {
+		var x, y;
+
+		canoffset = $(canvas).offset();
+		x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - Math.floor(canoffset.left);
+		y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop - Math.floor(canoffset.top) + 1;
+
+		return { X : x, Y : y };
+	},
 };

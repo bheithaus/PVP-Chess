@@ -49,7 +49,7 @@ CH.Views.Game = Backbone.View.extend({
 		var game;
 		if (options.target) {
 			game = this.collection.findWhere({
-				id: $(event.target).data("game-id")
+				id: $(options.target).data("game-id")
 			});
 		} else {
 			game = options.model;

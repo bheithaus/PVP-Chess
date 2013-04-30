@@ -16,24 +16,16 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	click: function(e) {
-	    var mouseX, mouseY, sqLength;
-		sqLength = this.sideLength/8;
-
-		if (e.offsetX) {
-			mouseX = e.offsetX;
-			mouseY = e.offsetY;
-		} else if (e.layerX) {
-			mouseX = e.layerX;
-			mouseY = e.layerY;
-		}
-		
-		var x = Math.floor(mouseX / sqLength),
-			y = Math.floor(mouseY / sqLength);
+	    var sqLength = this.sideLength/8,
+			mouse = CH.getCursorPosition(this.canvas, e),
+			x = Math.floor(mouse.X / sqLength),
+			y = Math.floor(mouse.Y / sqLength);
 			
 		if (this.clicks === 0) {
 			this.model.from = [y, x];
 		} else {
 			this.model.to = [y, x];
+			this.model.mover_id = CH.Store.currentUser.id;
 			this.model.save({
 				success:function(model){ 
 					console.log(model);
@@ -48,7 +40,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		 
  		this.clicks = this.clicks == 1 ? 0 : 1;
 		 
-	    console.log("Mouse x "+ mouseX+ " mouse Y: " +mouseY);
+	    console.log("Mouse x "+ mouse.X+ " mouse Y: " +mouse.Y);
 	},
 	
 	render: function() {

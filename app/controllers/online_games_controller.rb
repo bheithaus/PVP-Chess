@@ -17,7 +17,7 @@ class OnlineGamesController < ApplicationController
   end
   
   def create
-    @online_game = OnlineGame.new(params[:online_game])
+    @online_game = OnlineGame.new_game(params[:online_game])
     if @online_game.save
       render json: @online_game
     else
@@ -33,7 +33,6 @@ class OnlineGamesController < ApplicationController
     
     @online_game.execute_move(params[:move])
 
-    p @online_game
     @online_game.save
     render json: @online_game
     # takes three params ----( game_id, from, to)

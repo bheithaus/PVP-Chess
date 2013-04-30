@@ -18,23 +18,36 @@ class Game
   attr_reader :board
   
   def initialize(params = {})
-    options = {
-      player_white_id: 1,
-      player_black_id: 2
-    }.merge(params)
-    @player_white_id = options[:player_white_id]
-    @player_black_id = options[:player_black_id]
+    # options = {
+   #    player_white_id: 1,
+   #    player_black_id: 2
+   #  }.merge(params)
+
+   puts params
+   p params
+    @player_white_id = params[:player_white_id]
+    @player_black_id = params[:player_black_id]
     @turn = @player_white_id
     @board = Board.new(self)
   end
   
-  def make_move(from, to)
-    p from
-    raise "not your turn" unless correct_turn?(from)
+  def make_move(move)
+    from = move[:from]
+    to = move[:to]
+    mover_id = move[:mover_id]
+    puts "mover id"
+    p mover_id
+    puts "turn"
+    p @turn
+    puts "white player id"
+    p @player_white_id
+    puts "blac player id"
+    p @player_black_id
+    raise "not your turn" unless correct_turn?(mover_id)
     
     board.take_turn(from, to)
     
-    board.print
+    #board.print
     
     if board.game_over?(to)
       raise "check mate!"
@@ -47,10 +60,8 @@ class Game
     @turn = @turn == @player_white_id ? @player_black_id : @player_white_id
   end
     
-  def correct_turn?(from)
-    color = board.piece_at(from).color
-    
-    self.send("player_#{color}_id") == @turn
+  def correct_turn?(mover_id)    
+    mover_id == @turn
   end
 end
 
@@ -69,7 +80,7 @@ class Board
     @black_king
     install_pawns
     install_others
-    print
+    #print
   end
 
   def move_piece(from, to, board = @board)
