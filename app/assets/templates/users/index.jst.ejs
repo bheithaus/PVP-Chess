@@ -1,0 +1,11 @@
+
+<ul>
+
+<% users.each(function (user) { %>
+	<li>
+		<%= user.escape("fullName") %>
+		<%= user.escape("username") %>
+	</li>
+<% }); %>
+
+</ul>

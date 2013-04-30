@@ -14,6 +14,7 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	routes: {
 		"home": "home",
 		"signin": "signIn",
+		"players": "usersIndex",
 		"game": "game"
 	},
 	
@@ -27,6 +28,14 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	
 	signIn: function(){		
 		this.currentView = new CH.Views.SignIn();
+		
+		this.$content.html(this.currentView.render().$el);
+	},
+	
+	usersIndex: function(){		
+		this.currentView = new CH.Views.UsersIndex({
+			collection: CH.Store.Users
+		});
 		
 		this.$content.html(this.currentView.render().$el);
 	},

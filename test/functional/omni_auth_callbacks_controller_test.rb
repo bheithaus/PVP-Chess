@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SecretsControllerTest < ActionController::TestCase
+class OmniAuthCallbacksControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end

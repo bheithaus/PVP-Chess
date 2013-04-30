@@ -18,7 +18,7 @@ class StaticPagesController < ApplicationController
   end
   
   def start_page
-    
+    @users = User.all
   end
 
   def match_secret

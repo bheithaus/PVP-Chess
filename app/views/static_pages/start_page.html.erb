@@ -3,13 +3,16 @@
 
 <script>
 	$(function() {
-		var $navbar = $("#navbar");
-		var $content = $("#content");
-		var currentUserData = <%= current_user.to_json.html_safe %>;
+		var $navbar = $("#navbar"),
+			$content = $("#content"),
+			currentUserData = <%= current_user.to_json.html_safe %>,
+			usersData = <%= @users.to_json.html_safe %>;
+		
 		CH.init(
 			$navbar,
 			$content,
-			currentUserData
+			currentUserData,
+			usersData
 		);
 	});
 </script>

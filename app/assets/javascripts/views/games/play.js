@@ -91,7 +91,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 			 board = this.model.get("parsed_board"),
 			 ctx = this.ctx,
 			 sq_pos = this.sideLength/8,
-			 d = this.sideLength/35;
+			 d = this.sideLength/70;
 			 
 		_(board).each(function(row, i) {
 			_(row).each(function(sq, j) {

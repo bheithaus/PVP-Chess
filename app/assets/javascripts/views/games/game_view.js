@@ -1,7 +1,9 @@
 CH.Views.Game = Backbone.View.extend({
 	initialize: function() {
 		var that = this;
-		that.newGame = new CH.Models.Game;
+		that.newGame = new CH.Models.Game({
+			player_white_id: CH.Store.currentUser.id
+		});
 		
 		that.newGameButton = new CH.Views.NewGame({
 			model: that.newGame
@@ -46,7 +48,7 @@ CH.Views.Game = Backbone.View.extend({
 		
 		this.currentView = new CH.Views.PlayGame({
 			model: game,
-			$el: $('<canvas id="chess-game" width="800" height="800"></canvas>')
+			$el: $('<canvas id="chess-game" width="600" height="600"></canvas>')
 		});
 		
 		this.render();
