@@ -2,7 +2,8 @@ class OnlineGamesController < ApplicationController
   respond_to :json
   
   def index
-    @online_games = OnlineGame.all
+    user_id = params[:user_id]
+    @online_games = OnlineGame.all#.where("player_black_id = ? OR player_white_id = ?", user_id, user_id)
     
     render json: @online_games
   end
@@ -31,6 +32,10 @@ class OnlineGamesController < ApplicationController
     @online_game = OnlineGame.find(params[:id])
     
     @online_game.execute_move(params[:move])
+
+    p @online_game
+    @online_game.save
+    render json: @online_game
     # takes three params ----( game_id, from, to)
     
     # find that game, move from and to! :)

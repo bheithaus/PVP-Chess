@@ -6,6 +6,10 @@ Capcap::Application.routes.draw do
   post '/guess' => 'static_pages#match_secret'
   
   resources :online_games
+  
+  resources :users do
+    resources :online_games, only: :index
+  end
 
   resources :secrets, only: :index
   

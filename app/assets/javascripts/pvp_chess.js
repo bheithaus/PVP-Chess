@@ -22,9 +22,11 @@ window.CH = {
 
 		if (currentUserData) {
 			CH.Store.currentUser = new CH.Models.User(currentUserData);
+			CH.Store.currentUser.get("games").fetch();
 		} else {
 			console.log('yer not signed in');
 		}
+		
 		
 		this.router = new CH.Routers.ChessRouter($content);
 		

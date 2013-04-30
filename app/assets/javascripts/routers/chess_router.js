@@ -19,7 +19,7 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	
 	game: function() {
 		this.currentView = new CH.Views.Game({
-			model: new CH.Models.Game
+			collection: CH.Store.currentUser.get("games")
 		});
 		
 		this.$content.html(this.currentView.render().$el);

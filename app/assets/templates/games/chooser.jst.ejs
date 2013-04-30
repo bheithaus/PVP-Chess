@@ -1,0 +1,11 @@
+<div class="navbar">
+  <div class="navbar-inner center">
+	    <ul class="nav" id="chooser">
+			<% games.each(function(game) { %>
+				<li class="#">
+					<a id="sign-out" data-game-id="<%= game.id %>">Game <%= game.id %></a>
+				</li>
+			<% }); %>
+		</ul>
+	</div>
+</div>

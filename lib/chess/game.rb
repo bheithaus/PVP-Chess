@@ -14,7 +14,8 @@ require 'active_support/inflector'
 #how to load a whole folder?
 
 class Game
-  attr_reader :board, :player_white_id, :player_black_id
+  attr_accessor :player_white_id, :player_black_id, :turn
+  attr_reader :board
   
   def initialize(params = {})
     options = {
