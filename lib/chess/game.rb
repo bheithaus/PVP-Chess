@@ -43,23 +43,36 @@ class Game
     p @player_white_id
     puts "blac player id"
     p @player_black_id
-    raise "not your turn" unless correct_turn?(mover_id)
-    
-    board.take_turn(from, to)
-    
+    if !correct_turn?(mover_id)
+      raise "not your turn"
+    elsif !correct_piece?(from, mover_id)
+      raise "not your piece"
+    else
+      board.take_turn(from, to)
+      if board.game_over?(to)
+        raise "check mate!"
+      end
+      next_turn
+      
+    end
     #board.print
     
-    if board.game_over?(to)
-      raise "check mate!"
-    end
+
     
-    next_turn
   end
 
   def next_turn
     @turn = @turn == @player_white_id ? @player_black_id : @player_white_id
   end
+  
+  def correct_piece?(from, mover_id)
+    { white: @player_white_id, black: @player_black_id }.each do |color, id|
+      return true if @board.piece_at(from).color == color && id == mover_id
+    end
     
+    false   
+  end
+  
   def correct_turn?(mover_id)    
     mover_id == @turn
   end

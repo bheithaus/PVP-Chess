@@ -3,7 +3,7 @@ class OnlineGamesController < ApplicationController
   
   def index
     user_id = params[:user_id]
-    @online_games = OnlineGame.all#.where("player_black_id = ? OR player_white_id = ?", user_id, user_id)
+    @online_games = OnlineGame.all
     
     render json: @online_games
   end

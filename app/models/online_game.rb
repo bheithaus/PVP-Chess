@@ -6,8 +6,6 @@ class OnlineGame < ActiveRecord::Base
   attr_accessible :player_black_id, :player_white_id, :board
   
   def self.new_game(params)
-    puts "data"
-    p params
     game = Game.new(params)
     online_game = OnlineGame.new(params)
     

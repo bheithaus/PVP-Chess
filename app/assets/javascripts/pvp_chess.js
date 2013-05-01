@@ -42,14 +42,22 @@ window.CH = {
 		} else {
 			console.log('yer not signed in');
 		}
+		that.landingPage($content);
 
 		
 		this.router = new CH.Routers.ChessRouter($content);
 		
 		Backbone.history.start();
-		Backbone.history.navigate("home", {trigger: true})
-
+		
 		that.makeNavbar($navbar);
+	},
+	
+	landingPage: function($content) {
+		var landingView = new CH.Views.UserLanding({
+			model: CH.Store.currentUser
+		});
+		
+		$content.html(landingView.render().$el);
 	},
 	
 	makeNavbar: function($navbar) {
