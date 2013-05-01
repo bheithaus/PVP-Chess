@@ -7,12 +7,25 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.sideLength = this.canvas.height;
 		this.clicks = 0;
 		
-		var that = this;
-		var clickCallback = that.click.bind(that);
-		var renderCallback = that.render.bind(that);
+		// pusher subscribe
+		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
+				
+		// callbacks
+		var remoteUpdateCallback = this.remoteUpdate.bind(this);
+		var clickCallback = this.click.bind(this);
+		var renderCallback = this.render.bind(this);
 		
-		that.listenTo(that.model, 'sync', renderCallback);
-		that.canvas.addEventListener('click', clickCallback, false);
+		// bind listeners 
+		this.gameChannel.bind('remote_update', remoteUpdateCallback);
+		this.listenTo(this.model, 'remote_update', renderCallback);
+		this.canvas.addEventListener('click', clickCallback, false);
+	},
+	
+	remoteUpdate: function(data) {
+		console.log('remote_update triggered');
+		console.log(data);
+		this.model.set(this.model.parse(data));
+		this.model.trigger('remote_update');
 	},
 	
 	click: function(e) {

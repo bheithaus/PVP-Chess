@@ -52,13 +52,10 @@ class Game
       if board.game_over?(to)
         raise "check mate!"
       end
-      next_turn
-      
+      next_turn   
     end
     #board.print
-    
-
-    
+   
   end
 
   def next_turn

@@ -1,3 +1,5 @@
+require 'pusher'
+
 class OnlineGamesController < ApplicationController
   respond_to :json
   
@@ -12,8 +14,6 @@ class OnlineGamesController < ApplicationController
     @online_game = OnlineGame.find(params[:id])
     
     render json: @online_game
-    
-    #pass game to client
   end
   
   def create
@@ -23,25 +23,18 @@ class OnlineGamesController < ApplicationController
     else
       render json: @online_game.errors.full_messages, status: 422
     end
-    # make new board with player_white_id and player_black_id
-    
-    # save and give back to client
   end
   
   def update
     @online_game = OnlineGame.find(params[:id])
-    
     @online_game.execute_move(params[:move])
+    if @online_game.save
+      Pusher.trigger("private-game-#{@online_game.id}", 'remote_update', @online_game)
+    end
 
-    @online_game.save
-    render json: @online_game
-    # takes three params ----( game_id, from, to)
-    
-    # find that game, move from and to! :)
-    
-    # return serialized updated game if success
-    
-    # else throw error
+    render nothing: true
+
+    # render json: @online_game
   end
   
   def destroy
