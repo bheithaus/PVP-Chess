@@ -38,44 +38,6 @@ CH.Models.Game = Backbone.RelationalModel.extend({
 			parsed_board.push([]);
 			last = parsed_board.length - 1;
 			parsed_board[last] = str.split(",").slice(0,8);
-			// _(str.split(",")).each(function(piece) {
-				
-				// switch (piece) {
-	// 				case "_":
-	// 					parsed_board[last].push(null);
-	// 					break;
-	// 				default:
-	// 					parsed_board[last].push(piece);
-												// 
-						// switch (type) {
-						// 	case "P":
-						// 		//pawn
-						// 		break;
-						// 	case "R":
-						// 		//rook
-						// 	
-						// 		break;
-						// 	case "B":
-						// 		//bishop
-						// 		
-						// 		break;
-						// 	case "H":
-						// 		//knight
-						// 		
-						// 		break;
-						// 	case "Q":
-						// 		//queen
-						// 		
-						// 		break;
-						// 	case "K":
-						// 		//king
-						// 		
-						// 		break;							
-						// 	
-						// }
-				// }
-				
-			// });
 		});		
 		
 		return parsed_board.slice(0,8)

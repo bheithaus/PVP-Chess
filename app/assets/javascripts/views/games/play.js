@@ -6,6 +6,8 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.ctx = this.canvas.getContext("2d");
 		this.sideLength = this.canvas.height;
 		this.clicks = 0;
+		this.invert = (this.model.player_white_id == CH.Store.currentUser.id)
+		//modify click and drawPieces to implement invert
 		
 		// pusher subscribe
 		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
@@ -29,10 +31,21 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	click: function(e) {
+		//o and m are the inverters
+		var o, m;
+		
+		if (this.invert) {
+			o = 7;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+		
 	    var sqLength = this.sideLength/8,
-			mouse = CH.getCursorPosition(this.canvas, e),
-			x = Math.floor(mouse.X / sqLength),
-			y = Math.floor(mouse.Y / sqLength);
+			mouse = this.getCursorPosition(this.canvas, e),
+			x = o - m * Math.floor(mouse.X / sqLength),
+			y = o - m * Math.floor(mouse.Y / sqLength);
 			
 		if (this.clicks === 0) {
 			this.model.from = [y, x];
@@ -53,7 +66,17 @@ CH.Views.PlayGame = Backbone.View.extend({
 		 
  		this.clicks = this.clicks == 1 ? 0 : 1;
 		 
-	    console.log("Mouse x "+ mouse.X+ " mouse Y: " +mouse.Y);
+	    console.log("Mouse X: " + mouse.X + " mouse Y: " + mouse.Y);
+	},
+	
+	getCursorPosition: function(canvas, event) {
+		var x, y;
+
+		cOffset = $(canvas).offset();
+		x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - Math.floor(cOffset.left);
+		y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop - Math.floor(cOffset.top) + 1;
+
+		return { X : x, Y : y };
 	},
 	
 	render: function() {
@@ -71,14 +94,52 @@ CH.Views.PlayGame = Backbone.View.extend({
 		return this;
 	},
 	
-	selectSquare: function(event) {
-		console.log(event.target)
+	animate: function(from, to) {
+		var o, m, fromColor, toColor, 
+			board = this.model.get("parsed_board"),
+		   length = this.sideLength;
+		
+		if (this.invert) {
+			o = this.sideLength - 58;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+		//[y, x]
+		//[i, j]
+		fromColor = this.squareColor(from)
+		toColor = this.squareColor(to)
+		
+		
+		// calculate color of squares
+		
+		// repeatedly draw semi transparent square over the to square
+		// using...
+		// ctx.globalAlpha=0.2;
+		// move from piece in a straight line to to
+	},
+	
+	squareColor: function(sq) {
+		var o, m,
+			length = this.sideLength;
+		if (this.invert) {
+			o = this.sideLength - 58;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+		
+		
+		
+		
 		
 	},
 	
 	drawBlankBoard: function() {
 		var ctx = this.ctx,
-			length = this.sideLength;
+		 length = this.sideLength;
 		
 	    ctx.fillStyle = "rgb(74,74,74)";
 	    ctx.fillRect(0, 0, length, length);
@@ -92,18 +153,42 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	drawPieces: function () {
+		// I would like to draw the board so that the user is always at the bottom....
+		var o, m;
+		
+		console.log(this.sideLength);
+		console.log(this.inverse);
+		
+		if (this.invert) {
+			o = this.sideLength - 58;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+		
 		var  imgs = {},
 			 board = this.model.get("parsed_board"),
 			 ctx = this.ctx,
 			 sq_pos = this.sideLength/8,
-			 d = this.sideLength/70;
+ 				d = this.sideLength/70;
 			 
 		_(board).each(function(row, i) {
 			_(row).each(function(sq, j) {
 				if (sq != "_") {
 					imgs[sq] = new Image();
 					imgs[sq].onload = function () {
-						ctx.drawImage(imgs[sq], j * sq_pos + d, i * sq_pos + d);
+						console.log("x")
+						console.log(o)
+						console.log(m)
+						console.log(sq);
+						console.log(o - m * (j * sq_pos + d));
+						console.log("y")
+						console.log(o - m * (j * sq_pos + d));
+						
+						
+						
+						ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m *(i * sq_pos + d));
 					}
 					imgs[sq].src = '/assets/' + sq + '.png';
 				}

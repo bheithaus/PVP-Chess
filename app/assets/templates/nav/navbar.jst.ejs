@@ -1,27 +1,30 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner center">
+	   <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 	   <a class="brand" href="#index">PvP Online Chess</a>
-	    <ul class="nav" id="navvy">
-			<% if ( CH.Store.currentUser ) { %>
+	   <div class="nav-collapse collapse">
+		    <ul class="nav" id="navvy">
+				<% if ( CH.Store.currentUser ) { %>
+					<li class="#">
+						<a id="sign-out" href="#">Sign Out</a>
+					</li>
+				<% } %>
 				<li class="#">
-					<a id="sign-out" href="#">Sign Out</a>
+					<a id='new-game' href='#games'>Chess</a>
 				</li>
-			<% } %>
-			<li class="#">
-				<a id='new-game' href='#games'>Chess</a>
-			</li>
-			<li class="#">
-				<a id='players-index' href='#players'>Players</a>
-			</li>
-			<li class="#">
-				<a id='new-message' href='#'>New Message</a>
-			</li>
-			<li class="#">
-				<a id='chat' href='#'>Chat</a>
-			</li>
-			<li class="active">
-				<a id='home-button' href='#home'>Home</a>
-			</li>
-		</ul>
+				<li class="#">
+					<a id='players-index' href='#players'>Players</a>
+				</li>
+				<li class="#">
+					<a id='new-message' href='#'>New Message</a>
+				</li>
+				<li class="#">
+					<a id='chat' href='#'>Chat</a>
+				</li>
+				<li class="active">
+					<a id='home-button' href='#home'>Home</a>
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>
