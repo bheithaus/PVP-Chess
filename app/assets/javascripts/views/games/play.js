@@ -47,6 +47,14 @@ CH.Views.PlayGame = Backbone.View.extend({
 		
 		var width = window.screen.availWidth;
 		var height = window.screen.availHeight;
+		
+		console.log("height");
+		console.log(height);
+		
+		console.log("width");
+		console.log(width);
+		
+		
 		var cheight = height - 50 > 600 ? 600 : height - 50 ; //max size 600px Square
 		var cwidth = width - 50;
 		
@@ -55,7 +63,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		} else {
 			cheight = cwidth;
 		}
-
 
 		console.log("c height");
 		console.log(cheight);
