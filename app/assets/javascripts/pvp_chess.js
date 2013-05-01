@@ -28,14 +28,14 @@ window.CH = {
 			CH.pusher = new Pusher('2bfd0a96d75cfe730e81');
 			var presenceChannel = CH.pusher.subscribe('presence-channel');
 			presenceChannel.bind('pusher:subscription_succeeded', function() {
-			  var me = presenceChannel.members.me;
-			  var userId = me.id;
-			  var userInfo = me.info;
-			  console.log(presenceChannel.members.count);
-  			presenceChannel.members.each(function(member) {
-  						  		  			console.log(member);
-  						  		  		  CH.Store.onlineUsers.push(member.id);
-  						  		  		});
+				var me = presenceChannel.members.me;
+				var userId = me.id;
+				var userInfo = me.info;
+				console.log(presenceChannel.members.count);
+	  			presenceChannel.members.each(function(member) {
+	  						  		  			console.log(member);
+	  						  		  		  CH.Store.onlineUsers.push(member.id);
+  		  		});
 			});
 			
 		} else {

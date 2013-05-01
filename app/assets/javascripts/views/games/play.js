@@ -4,7 +4,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.$el = options.$el;
 		this.canvas = this.$el.get(0);
 		this.ctx = this.canvas.getContext("2d");
-		this.sideLength = this.canvas.height;
 		this.clicks = 0;
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id)
 		//modify click and drawPieces to implement invert
@@ -21,6 +20,70 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.gameChannel.bind('remote_update', remoteUpdateCallback);
 		this.listenTo(this.model, 'remote_update', renderCallback);
 		this.canvas.addEventListener('click', clickCallback, false);
+		
+		
+		// mobile resize and orientation handlers
+		this.rc = 0;  // resize counter
+		this.oc = 0;  // orientiation counter
+		var ios = navigator.userAgent.match(/(iPhone)|(iPod)/);
+
+		var resizeTimeout;
+		var that = this;
+		$(window).resize(function() {
+		  clearTimeout(resizeTimeout);
+		  resizeTimeout = setTimeout(that.resizeCanvas.bind(that), 100);
+		});
+		this.resizeCanvas();
+
+		var otimeout;
+		window.onorientationchange = function() {
+		  clearTimeout(otimeout);
+		  otimeout = setTimeout(that.orientationChange.bind(that), 50);
+		}
+		if (ios) {
+		  // increase height to get rid off ios address bar
+		  $("#container").height($(window).height() + 60)
+		}
+		
+		var width = window.screen.availWidth;
+		var height = window.screen.availHeight;
+		var cheight = height - 50 > 600 ? 600 : height - 50 ; //max size 600px Square
+		var cwidth = width - 50;
+		
+		if (cheight < cwidth) {
+			cwidth = cheight;
+		} else {
+			cheight = cwidth;
+		}
+
+
+		console.log("c height");
+		console.log(cheight);
+		console.log("c width");
+		
+		console.log(cwidth);
+
+		// set canvas width and height
+		$(this.canvas).attr('width', cwidth);
+		$(this.canvas).attr('height', cheight)
+		this.sideLength = this.canvas.height;
+
+		// hides the WebKit url bar
+		if (ios) {
+		  setTimeout(function() {
+			  window.scrollTo(0, 1);
+		  }, 100);   
+		}
+	},
+	
+	orientationChange: function () {
+	  // inc orientation counter
+	  this.oc++;
+	},
+	
+	resizeCanvas: function() {
+	  // inc resize counter
+	  this.rc++;
 	},
 	
 	remoteUpdate: function(data) {
@@ -178,14 +241,14 @@ CH.Views.PlayGame = Backbone.View.extend({
 				if (sq != "_") {
 					imgs[sq] = new Image();
 					imgs[sq].onload = function () {
-						console.log("x")
-						console.log(o)
-						console.log(m)
-						console.log(sq);
-						console.log(o - m * (j * sq_pos + d));
-						console.log("y")
-						console.log(o - m * (j * sq_pos + d));
-						
+						// console.log("x")
+// 						console.log(o)
+// 						console.log(m)
+// 						console.log(sq);
+// 						console.log(o - m * (j * sq_pos + d));
+// 						console.log("y")
+// 						console.log(o - m * (j * sq_pos + d));
+// 						
 						
 						
 						ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m *(i * sq_pos + d));

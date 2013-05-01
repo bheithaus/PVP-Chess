@@ -57,7 +57,7 @@ CH.Views.Game = Backbone.View.extend({
 		
 		this.currentView = new CH.Views.PlayGame({
 			model: game,
-			$el: $('<canvas id="chess-game" width="600" height="600"></canvas>')
+			$el: $('<canvas id="chess-game" width="600" height="600">Chess Game</canvas>')
 		});
 		
 		this.render();
