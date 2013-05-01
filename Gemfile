@@ -10,6 +10,8 @@ gem 'omniauth'
 gem 'omniauth-facebook'
 
 gem 'unicorn'
+
+gem 'foreman'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
