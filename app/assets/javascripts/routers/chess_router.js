@@ -15,8 +15,8 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	},
 	
 	routes: {
+		"welcome": "welcome",
 		"home": "home",
-		"signin": "signIn",
 		"players": "usersIndex",
 		"games": "game",
 		"games/:id": "game"
@@ -36,8 +36,8 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		this.$content.html(this.currentView.render().$el);
 	},
 	
-	signIn: function(){		
-		this.currentView = new CH.Views.SignIn();
+	welcome: function(){		
+		this.currentView = new CH.Views.Welcome();
 		
 		this.$content.html(this.currentView.render().$el);
 	},
