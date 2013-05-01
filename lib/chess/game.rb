@@ -34,15 +34,15 @@ class Game
   def make_move(move)
     from = move[:from]
     to = move[:to]
-    mover_id = move[:mover_id]
-    puts "mover id"
-    p mover_id
-    puts "turn"
-    p @turn
-    puts "white player id"
-    p @player_white_id
-    puts "blac player id"
-    p @player_black_id
+    mover_id = move[:mover_id]    # 
+    # puts "mover id"
+    # p mover_id
+    # puts "turn"
+    # p @turn
+    # puts "white player id"
+    # p @player_white_id
+    # puts "blac player id"
+    # p @player_black_id
     if !correct_turn?(mover_id)
       raise "not your turn"
     elsif !correct_piece?(from, mover_id)
@@ -154,8 +154,8 @@ class Board
 	def putting_self_in_check?(from, to)
     mover = self[from]
     offense = self.send("#{opposite_color(mover)}_team")
-    defense_king = self.send("#{mover.color}_king")
 		d_board = dup
+    defense_king = piece_at(self.send("#{mover.color}_king").pos, d_board)
 		moved_piece = move_piece(from, to, d_board)
     
 		in_check?(offense, defense_king, moved_piece, d_board)
@@ -165,6 +165,7 @@ class Board
 		king_pos = defense_king.pos
 		offense.each do |piece|
       piece = piece_at(piece.pos, board)
+      p moved_piece.pos
       piece = moved_piece unless piece
 
 			piece.moves.each do |move|

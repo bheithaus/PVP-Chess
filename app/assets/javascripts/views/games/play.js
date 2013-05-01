@@ -1,8 +1,7 @@
 CH.Views.PlayGame = Backbone.View.extend({
 
 	initialize: function(options){
-		this.$el = options.$el;
-		this.canvas = this.$el.get(0);
+		this.canvas = options.$canvas.get(0);
 		this.ctx = this.canvas.getContext("2d");
 		this.clicks = 0;
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id)
@@ -152,11 +151,11 @@ CH.Views.PlayGame = Backbone.View.extend({
 	render: function() {
 		var ctx = this.ctx,
 			length = this.sideLength,
-			renderedContent = JST["games/play"]({
-									game: this.model
+			statsView = new CH.Views.GameStats({
+									model: this.model
 								});
-								
-		this.$el.html(renderedContent);
+		this.$el.html(statsView.render().$el);
+		this.$el.append(this.canvas);						
 
         ctx.clearRect(0, 0, length, length);
 		this.drawBlankBoard();
