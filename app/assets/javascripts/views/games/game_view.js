@@ -23,15 +23,19 @@ CH.Views.Game = Backbone.View.extend({
 	
 	render: function() {
 		var that = this;
+		
 		CH.Store.currentUser.get("games").fetch({
 			success: function() {
 				var chooserButton = $("<button id='game-chooser'>Choose a Game</button>")
 				that.$el.prepend(chooserButton);
 			}
 		});
+		
 		if (that.currentView) {
+			
 			that.$el.html(that.currentView.render().$el);
 		}
+		
 		that.$el.prepend(that.newGameButton.render().$el);
 		
 		return that;
@@ -48,10 +52,12 @@ CH.Views.Game = Backbone.View.extend({
 	playGame: function(options) {
 		var game;
 		if (options.target) {
+			var id = $(options.target).data("game-id");
 			game = this.collection.findWhere({
-				id: $(options.target).data("game-id")
+				id: id
 			});
 		} else {
+			Backbone.history.navigate("#games/" + id);
 			game = options.model;
 		}
 		

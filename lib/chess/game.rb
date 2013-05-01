@@ -14,7 +14,7 @@ require 'active_support/inflector'
 #how to load a whole folder?
 
 class Game
-  attr_accessor :player_white_id, :player_black_id, :turn
+  attr_accessor :player_white_id, :player_black_id, :turn, :in_check
   attr_reader :board
   
   def initialize(params = {})
@@ -44,14 +44,15 @@ class Game
     # puts "blac player id"
     # p @player_black_id
     if !correct_turn?(mover_id)
-      raise "not your turn"
+      raise "Not your turn"
     elsif !correct_piece?(from, mover_id)
-      raise "not your piece"
+      raise "You can only move your own pieces"
     else
       board.take_turn(from, to)
       if board.game_over?(to)
-        raise "check mate!"
+        raise "Check Mate!"
       end
+      self.in_check = board.in_check
       next_turn   
     end
     #board.print
@@ -76,7 +77,7 @@ class Game
 end
 
 class Board
-  attr_accessor :game, :board,
+  attr_accessor :game, :board, :in_check,
                 :white_team, :white_king,
                 :black_team, :black_king
   
@@ -110,15 +111,18 @@ class Board
     
     if can_move && !putting_self_in_check
       puts "making a real move"
-      move_piece(from, to)
+      offense = self.send("#{piece_at(from).color}_team")
+      defense_king = self.send("#{opposite_color(piece_at(from))}_king")
+      
+      moved_piece = move_piece(from, to)
+      
+    	self.in_check = in_check?(offense, defense_king, moved_piece)
     elsif can_move
       puts "mover -- #{piece_at(from).color} #{piece_at(from).class}"
       
-      raise "you can't put yourself in check"
+      raise "You can't put yourself in check"
     else
-      puts "from #{from}"
-      puts "to #{to}"
-      raise "that move is not included in #{piece_at(from).color} #{piece_at(from).class}'s moves"
+      raise "That move is not part of #{piece_at(from).color} #{piece_at(from).class}'s repertoire"
     end
   end
   

@@ -27,11 +27,17 @@ class OnlineGamesController < ApplicationController
   
   def update
     @online_game = OnlineGame.find(params[:id])
-    @online_game.execute_move(params[:move])
-    if @online_game.save
-      Pusher.trigger("private-game-#{@online_game.id}", 'remote_update', @online_game)
+    
+    begin 
+      @online_game.execute_move(params[:move])
+    rescue Exception => e
+      Pusher.trigger("private-game-#{@online_game.id}", 'remote_update_error', e.message)
+    else
+      if @online_game.save
+        Pusher.trigger("private-game-#{@online_game.id}", 'remote_update', @online_game)
+      end
     end
-
+    
     render nothing: true
 
     # render json: @online_game

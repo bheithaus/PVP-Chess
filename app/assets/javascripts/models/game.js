@@ -38,7 +38,7 @@ CH.Models.Game = Backbone.RelationalModel.extend({
 			parsed_board.push([]);
 			last = parsed_board.length - 1;
 			parsed_board[last] = str.split(",").slice(0,8);
-		});		
+		});
 		
 		return parsed_board.slice(0,8)
 	}

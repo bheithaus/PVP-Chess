@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130430175840) do
+ActiveRecord::Schema.define(:version => 20130501220112) do
 
   create_table "captchas", :force => true do |t|
     t.string   "client_ip"
@@ -54,6 +54,7 @@ ActiveRecord::Schema.define(:version => 20130430175840) do
     t.text     "board"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
+    t.boolean  "in_check"
   end
 
   create_table "secrets", :force => true do |t|

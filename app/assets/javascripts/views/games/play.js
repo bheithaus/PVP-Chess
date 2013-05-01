@@ -4,7 +4,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.canvas = options.$canvas.get(0);
 		this.ctx = this.canvas.getContext("2d");
 		this.clicks = 0;
-		this.invert = (this.model.player_white_id == CH.Store.currentUser.id)
+		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
 		//modify click and drawPieces to implement invert
 		
 		// pusher subscribe
@@ -12,12 +12,16 @@ CH.Views.PlayGame = Backbone.View.extend({
 				
 		// callbacks
 		var remoteUpdateCallback = this.remoteUpdate.bind(this);
+		var remoteUpdateErrorCallback = this.remoteUpdateError.bind(this);
+		
 		var clickCallback = this.click.bind(this);
-		var renderCallback = this.render.bind(this);
+		var redrawCallback = this.redrawBoard.bind(this);
 		
 		// bind listeners 
 		this.gameChannel.bind('remote_update', remoteUpdateCallback);
-		this.listenTo(this.model, 'remote_update', renderCallback);
+		this.gameChannel.bind('remote_update_error', remoteUpdateErrorCallback);
+		
+		this.listenTo(this.model, 'remote_update', redrawCallback);  //replace with animateCallback :)
 		this.canvas.addEventListener('click', clickCallback, false);
 		
 		
@@ -45,14 +49,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		}
 		
 		var width = window.screen.availWidth;
-		var height = window.screen.availHeight;
-		
-		console.log("height");
-		console.log(height);
-		
-		console.log("width");
-		console.log(width);
-		
+		var height = window.screen.availHeight;		
 		
 		var cheight = height - 50 > 600 ? 600 : height - 50 ; //max size 600px Square
 		var cwidth = width - 50;
@@ -62,12 +59,12 @@ CH.Views.PlayGame = Backbone.View.extend({
 		} else {
 			cheight = cwidth;
 		}
-
-		console.log("c height");
-		console.log(cheight);
-		console.log("c width");
-		
-		console.log(cwidth);
+		// 
+		// console.log("c height");
+		// console.log(cheight);
+		// console.log("c width");
+		// 
+		// console.log(cwidth);
 
 		// set canvas width and height
 		$(this.canvas).attr('width', cwidth);
@@ -82,6 +79,32 @@ CH.Views.PlayGame = Backbone.View.extend({
 		}
 	},
 	
+	errorAlert: function (error) {
+	    var alertDiv = $("#game-alert");
+		
+		alertDiv.text(error);
+		alertDiv.addClass("in");		
+		
+		var that = this;
+		window.setTimeout(function () {
+			alertDiv.removeClass("in");
+			if (that.model.get("in_check")) {
+				that.inCheckAlert();
+			}
+		}, 3000);
+		this.redrawBoard();
+	},
+	
+	inCheckAlert: function() {
+		if (this.model.get("turn") == CH.Store.currentUser.id) {
+		    var alertDiv = $("#game-alert");
+			 	
+			alertDiv.text("You are in Check!");
+			alertDiv.addClass("in");
+			alertDiv.addClass("alert-error");
+		}
+	},
+	
 	orientationChange: function () {
 	  // inc orientation counter
 	  this.oc++;
@@ -92,11 +115,25 @@ CH.Views.PlayGame = Backbone.View.extend({
 	  this.rc++;
 	},
 	
+	remoteUpdateError: function(error) {
+		this.errorAlert(error);
+		console.log(error);
+	},
+	
 	remoteUpdate: function(data) {
 		console.log('remote_update triggered');
 		console.log(data);
 		this.model.set(this.model.parse(data));
+		if (this.model.get("in_check")) {
+			this.inCheckAlert();
+		}
 		this.model.trigger('remote_update');
+	},
+	
+	redrawBoard: function() {
+        this.ctx.clearRect(0, 0, length, length);
+		this.drawBlankBoard();
+		this.drawPieces();
 	},
 	
 	click: function(e) {
@@ -118,12 +155,17 @@ CH.Views.PlayGame = Backbone.View.extend({
 			
 		if (this.clicks === 0) {
 			this.model.from = [y, x];
+			this.highlightSquare([y, x]);
 		} else {
 			this.model.to = [y, x];
 			this.model.mover_id = CH.Store.currentUser.id;
 			this.model.save({
-				success:function(model){ 
+				success:function(model) { 
 					console.log(model);
+				},
+				
+				error: function(model) {
+					
 				}
 			});
 			console.log("from");
@@ -150,16 +192,27 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	render: function() {
 		var ctx = this.ctx,
-			length = this.sideLength,
-			statsView = new CH.Views.GameStats({
-									model: this.model
-								});
-		this.$el.html(statsView.render().$el);
-		this.$el.append(this.canvas);						
+			length = this.sideLength;
 
-        ctx.clearRect(0, 0, length, length);
-		this.drawBlankBoard();
-		this.drawPieces();
+			
+		var statsView = new CH.Views.GameStats({
+								model: this.model
+							});
+					
+		this.$el.append(statsView.render().$el);				
+
+		if (this.model.get("in_check")) {
+			var that = this;
+			window.setTimeout(function(){
+				
+				that.inCheckAlert();
+			}, 300);
+		}
+								
+		// this.$el.html(statsView.render().$el);
+		this.$el.append(this.canvas);
+
+		this.redrawBoard();
 		return this;
 	},
 	
@@ -187,6 +240,52 @@ CH.Views.PlayGame = Backbone.View.extend({
 		// using...
 		// ctx.globalAlpha=0.2;
 		// move from piece in a straight line to to
+	},
+	
+	highlightSquare: function(sq) {
+		var o, m,
+			i = sq[0],
+			j = sq[1],
+			ctx = this.ctx,
+			length = this.sideLength;
+			
+		if (this.invert) {
+			o = this.sideLength * 7 / 8;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+
+		ctx.globalAlpha = 0.2;
+		
+	    ctx.fillStyle = "rgb(49,92,235)";
+		
+	    ctx.fillRect(o - m * (j*length/8), o - m * (i*length/8), length/8, length/8);
+		ctx.globalAlpha = 1;
+	},
+	
+	unHighlightSquare: function(sq) {
+		var o, m,
+			i = sq[0],
+			j = sq[1],
+			ctx = this.ctx,
+			board = this.model.get("parsed_board");
+			length = this.sideLength;
+			
+		if (this.invert) {
+			o = this.sideLength - 58;
+			m = 1;
+		} else {
+			o = 0;
+			m = -1;
+		}
+		ctx.globalAlpha = 0.2;
+		
+	    ctx.fillStyle = "rgb(49,92,235)";
+		
+	    ctx.fillRect(j*length/8, i*length/8, length/8, length/8);
+		ctx.globalAlpha = 1;
 	},
 	
 	squareColor: function(sq) {
@@ -226,7 +325,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		var o, m;
 		
 		console.log(this.sideLength);
-		console.log(this.inverse);
 		
 		if (this.invert) {
 			o = this.sideLength - 58;
