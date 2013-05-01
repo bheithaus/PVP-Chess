@@ -165,7 +165,6 @@ class Board
 		king_pos = defense_king.pos
 		offense.each do |piece|
       piece = piece_at(piece.pos, board)
-      p moved_piece.pos
       piece = moved_piece unless piece
 
 			piece.moves.each do |move|
@@ -193,15 +192,15 @@ class Board
   def check_mate?(in_check_king)
     defense_team = self.send("#{in_check_king.color}_team")
     offense = self.send("#{opposite_color(in_check_king)}_team")
-    
     defense_team.each do |piece|      
       piece.moves.each do |move|
         d_board = dup
-    		moved_piece = move_piece(piece.pos, move, d_board) unless in_check_king == piece
+        in_check_king_dup = piece_at(in_check_king.pos, d_board)
+    		moved_piece = move_piece(piece.pos, move, d_board) #unless in_check_king == piece
         
         puts "in check?"
         puts in_check?(offense, in_check_king, moved_piece, d_board)
-    		return false unless in_check?(offense, in_check_king, moved_piece, d_board)
+    		return false unless in_check?(offense, in_check_king_dup, moved_piece, d_board)
       end
     end
     
