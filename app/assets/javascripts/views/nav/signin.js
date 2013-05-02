@@ -19,6 +19,9 @@ CH.Views.SignIn = Backbone.View.extend({
 			function(signedInUser) {
 				console.log(signedInUser);
 				CH.Store.currentUser = new CH.Models.User(signedInUser);
+				CH.bindUserChannel();
+				
+				
 				CH.Store.currentUser.get("games").fetch();
 				Backbone.history.navigate("home", {trigger: true});
 			}

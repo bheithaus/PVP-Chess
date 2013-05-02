@@ -4,8 +4,8 @@ class OnlineGamesController < ApplicationController
   respond_to :json
   
   def index
-    user_id = params[:user_id]
-    @online_games = OnlineGame.all
+    id = params[:user_id]
+    @online_games = OnlineGame.where("player_white_id = ? OR player_black_id = ?", id, id)
     
     render json: @online_games
   end
@@ -19,6 +19,8 @@ class OnlineGamesController < ApplicationController
   def create
     @online_game = OnlineGame.new_game(params[:online_game])
     if @online_game.save
+      Pusher.trigger("private-user-#{@online_game.player_black_id}", "invited", @online_game);
+      
       render json: @online_game
     else
       render json: @online_game.errors.full_messages, status: 422
@@ -28,11 +30,15 @@ class OnlineGamesController < ApplicationController
   def update
     @online_game = OnlineGame.find(params[:id])
     
-    begin 
+    begin
       @online_game.execute_move(params[:move])
     rescue Exception => e
+      p "rescueing from exception"
       Pusher.trigger("private-game-#{@online_game.id}", 'remote_update_error', e.message)
     else
+      p "turn"
+      @online_game.turn
+      
       if @online_game.save
         Pusher.trigger("private-game-#{@online_game.id}", 'remote_update', @online_game)
       end

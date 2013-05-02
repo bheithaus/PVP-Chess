@@ -1,6 +1,9 @@
 CH.Views.Game = Backbone.View.extend({
-	initialize: function() {
+	initialize: function(options) {
 		var that = this;
+		
+		that.model = options.model;
+		
 		that.newGame = new CH.Models.Game({
 			player_white_id: CH.Store.currentUser.id
 		});
@@ -8,7 +11,10 @@ CH.Views.Game = Backbone.View.extend({
 			model: that.newGame
 		});
 		
+		console.log(that);
+		
 		if (that.model) {
+			console.log(that.model);
 			this.playGame({
 				model: that.model
 			});
@@ -51,15 +57,19 @@ CH.Views.Game = Backbone.View.extend({
 	
 	playGame: function(options) {
 		var game;
+		console.log(options);
 		if (options.target) {
 			var id = $(options.target).data("game-id");
 			game = this.collection.findWhere({
 				id: id
 			});
-	//		Backbone.history.navigate("#games/" + id);
+			Backbone.history.navigate("#games/" + id);
 		} else {
+			console.log("should be loading a game!!");
 			game = options.model;
 		}
+		
+		console.log(options.model);
 		
 		this.currentView = new CH.Views.PlayGame({
 			model: game,

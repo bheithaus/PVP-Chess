@@ -1,9 +1,6 @@
 CH.Models.User = Backbone.RelationalModel.extend({
 	urlRoot: "user",
 	
-	fullName: function() {
-		return this.get("fname") +" "+ this.get("lname");
-	},
 	relations: [{
 		type: "Backbone.HasMany",
 		key: "games",

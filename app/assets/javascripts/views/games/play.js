@@ -1,29 +1,28 @@
 CH.Views.PlayGame = Backbone.View.extend({
 
 	initialize: function(options){
+		this.setupCanvas(options);
+		//modify click and drawPieces to implement invert
+		console.log(this.model);
+
+				
+		// callbacks
+		this.installRemoteUpdateCallbacks();
+		this.toggleCanvasClickListener();
+		
+		this.mobileResponder();
+	},
+	
+	setupCanvas: function(options) {
 		this.canvas = options.$canvas.get(0);
 		this.ctx = this.canvas.getContext("2d");
 		this.clicks = 0;
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
-		//modify click and drawPieces to implement invert
+		//invert display so user is always on bottom of board
 		
-		// pusher subscribe
-		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
-				
-		// callbacks
-		var remoteUpdateCallback = this.remoteUpdate.bind(this);
-		var remoteUpdateErrorCallback = this.remoteUpdateError.bind(this);
-		
-		var clickCallback = this.click.bind(this);
-		var redrawCallback = this.redrawBoard.bind(this);
-		
-		// bind listeners 
-		this.gameChannel.bind('remote_update', remoteUpdateCallback);
-		this.gameChannel.bind('remote_update_error', remoteUpdateErrorCallback);
-		
-		this.listenTo(this.model, 'updated_remotely', redrawCallback);  //replace with animateCallback :)
-		this.canvas.addEventListener('click', clickCallback, false);
-		
+	},
+	
+	mobileResponder: function() {
 		// mobile resize and orientation handlers
 		this.rc = 0;  // resize counter
 		this.oc = 0;  // orientiation counter
@@ -67,7 +66,27 @@ CH.Views.PlayGame = Backbone.View.extend({
 		  setTimeout(function() {
 			  window.scrollTo(0, 1);
 		  }, 100);   
-		}
+		}	
+	},
+	
+	installRemoteUpdateCallbacks: function() {
+		// pusher subscribe
+		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
+		
+		var remoteUpdateCallback = this.remoteUpdate.bind(this);
+		var remoteUpdateErrorCallback = this.remoteUpdateError.bind(this);
+		var redrawCallback = this.redrawBoard.bind(this);
+		
+		// bind listeners
+		this.listenTo(this.model, 'change', redrawCallback);
+		this.gameChannel.bind('remote_update', remoteUpdateCallback);
+		this.gameChannel.bind('remote_update_error', remoteUpdateErrorCallback);
+		this.listenTo(this.model, 'updated_remotely', redrawCallback);  //replace with animateCallback :)
+		
+	},
+	
+	myTurn: function() {
+		return (this.model.get("turn") == CH.Store.currentUser.id);
 	},
 	
 	brownRad: function() {
@@ -109,13 +128,21 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	inCheckAlert: function() {
-		if (this.model.get("turn") == CH.Store.currentUser.id) {
+		if (this.myTurn()) {
 		    var alertDiv = $("#game-alert");
 			 	
 			alertDiv.text("You are in Check!");
 			alertDiv.addClass("in");
 			alertDiv.addClass("alert-error");
 		}
+	},
+	
+	clearCheckAlert: function () {
+	    var alertDiv = $("#game-alert");
+		 	
+		alertDiv.text();
+		alertDiv.removeClass("in");
+		alertDiv.removeClass("alert-error");
 	},
 	
 	orientationChange: function () {
@@ -129,18 +156,21 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	remoteUpdateError: function(error) {
-		if (CH.Store.currentUser.get("id") == this.model.get("turn")) {
+		// ohhhhh!
+		if (this.myTurn()) {
 			this.errorAlert(error);
 			console.log(error);
 		}
 	},
 	
 	remoteUpdate: function(data) {
-		console.log('remote_update triggered');
+		console.log('remote_update success');
 		console.log(data);
 		this.model.set(this.model.parse(data));
 		if (this.model.get("in_check")) {
 			this.inCheckAlert();
+		} else {
+			this.clearCheckAlert();
 		}
 		this.model.trigger('updated_remotely');
 	},
@@ -148,6 +178,37 @@ CH.Views.PlayGame = Backbone.View.extend({
 	redrawBoard: function() {
 		this.drawBlankBoard();
 		this.drawPieces();
+	},
+	
+	toggleWaiting: function() {
+		var  waiting = !this.myTurn(),
+	    	alertDiv = $("#game-alert");
+		
+		if (waiting) {
+			console.log("awaiting opp move");
+			alertDiv.text("Awaiting Opponent's Move");
+			alertDiv.addClass("in");
+		} else {
+			alertDiv.text();
+			alertDiv.removeClass("in");
+		}
+		
+	},
+	
+	toggleCanvasClickListener: function() {
+		var clickable = this.myTurn();
+		console.log(clickable);
+		
+		if (clickable) {
+			console.log("turn on canvas clickable");
+			
+			var clickCallback = this.click.bind(this);
+			this.canvas.addEventListener('click', clickCallback, false);
+		} else {
+			console.log("turn off canvas clickable");
+			this.canvas.removeEventListener('click');
+		}
+		this.toggleWaiting();
 	},
 	
 	click: function(e) {
@@ -162,10 +223,11 @@ CH.Views.PlayGame = Backbone.View.extend({
 			m = -1;
 		}
 		
-	    var sqLength = this.sideLength/8,
+	    var  that = this,
+		 sqLength = this.sideLength/8,
 			mouse = this.getCursorPosition(this.canvas, e),
-			x = o - m * Math.floor(mouse.X / sqLength),
-			y = o - m * Math.floor(mouse.Y / sqLength);
+		 	    x = o - m * Math.floor(mouse.X / sqLength),
+				y = o - m * Math.floor(mouse.Y / sqLength);
 			
 		if (this.clicks === 0) {
 			this.model.from = [y, x];
@@ -174,7 +236,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 			this.model.to = [y, x];
 			this.model.mover_id = CH.Store.currentUser.id;
 			this.model.save({
-				success:function(model) { 
+				success:function(model) {
+					that.toggleCanvasClickListener();
+					
 					console.log(model);
 				},
 				
@@ -334,6 +398,15 @@ CH.Views.PlayGame = Backbone.View.extend({
 			    ctx.fillRect(j*length/4 + offset, i*length/8, length/8, length/8);
 			});
 		});
+	},
+	
+	loadImages: function() {
+		if (!CH.Store.imgs) {
+			// CH.Store.imgs = 
+			
+			
+		}
+			
 	},
 	
 	drawPieces: function () {

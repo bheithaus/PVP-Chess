@@ -10,7 +10,6 @@ CH.Views.Navbar = Backbone.View.extend({
 	},
 	
 	render: function() {
-		console.log("rendered");
 		var that = this;
 		var renderedContent = JST["nav/navbar"]({
 			userEmail: CH.Store.currentUser.escape("email")
