@@ -1,11 +1,20 @@
 CH.Views.UsersIndex = Backbone.View.extend({
+	initialize: function() {
+		
+		var renderCallback = this.render.bind(this);
+		
+		this.listenTo(CH.Store.onlineUsers, 'add', renderCallback);
+		this.listenTo(CH.Store.onlineUsers, 'remove', renderCallback);
+	},
 	events: {
 		'click button#invite': "inviteToGame"
 	},
+	
 	render: function() {
 		var that = this;
 		var renderedContent = JST["users/index"]({
-			users: that.collection
+			offlineUsers: that.collection,
+			onlineUsers: CH.Store.onlineUsers
 		});
 		that.$el.html(renderedContent);
 

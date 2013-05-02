@@ -13,15 +13,11 @@ window.CH = {
 	init: function($navbar, $content, currentUserData, usersData) {
 		var that = this;
 		
-		// channel.bind('my-event', function(data) {
-// 		  alert('An event was triggered with message: ' + data.message);
-// 		});
-		
-		CH.Store.Users = new CH.Collections.Users(usersData);
-		CH.Store.onlineUsers = [];
+		CH.Store.users = new CH.Collections.Users(usersData);
+		CH.Store.onlineUsers = new CH.Collections.OnlineUsers();
 		
 		if (currentUserData) {
-			CH.Store.currentUser = CH.Store.Users.findWhere({
+			CH.Store.currentUser = CH.Store.users.findWhere({
 				id: currentUserData.id
 			});
 			CH.Store.currentUser.get("games").fetch();
@@ -34,8 +30,11 @@ window.CH = {
 				console.log(presenceChannel.members.count);
 	  			presenceChannel.members.each(function(member) {
 	  						  		  			console.log(member);
-	  						  		  		  CH.Store.onlineUsers.push(member.id);
+	  						  		  		  CH.Store.onlineUsers.add(CH.Store.users.findWhere({ id: parseInt(member.id) }));
   		  		});
+			});
+			presenceChannel.bind('pusher:member_removed', function(member) {
+			  CH.Store.onlineUsers.remove(parseInt(member.id));
 			});
 			
 		} else {

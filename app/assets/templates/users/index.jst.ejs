@@ -1,17 +1,34 @@
 <h1>Users</h1>
+
+<h2>Online</h2>
 <ul style="list-style:none;">
 
-<% users.each(function (user) { %>
+<% var onlineUserIDs = []; %>
+
+<% onlineUsers.each(function (user) { %>
 	<% if (user.id != CH.Store.currentUser.id) { %>
+		<% onlineUserIDs.push(user.get("id")); %>
 	<li>
 		<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
 		<%= user.escape("email") %>
-		<% if (CH.Store.onlineUsers.indexOf(user.get("id").toString()) != -1 ) { %>
-			<span class="blue"><i class="icon-globe"></i></span>
-		<% } %>
+		<span class="blue"><i class="icon-globe"></i></span>
 	</li>
 	<% } %>
 	
 <% }); %>
 
 </ul>
+
+<h2>Offline</h2>
+<ul style="list-style:none;">
+
+<% offlineUsers.each(function (user) { %>
+	<% if (user.get("id") != CH.Store.currentUser.id && onlineUserIDs.indexOf(user.get("id")) == -1 ) { %>
+	<li>
+		<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+		<%= user.escape("email") %>
+
+	</li>
+	<% } %>
+	
+<% }); %>

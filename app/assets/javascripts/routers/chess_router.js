@@ -44,7 +44,7 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	
 	usersIndex: function(){		
 		this.currentView = new CH.Views.UsersIndex({
-			collection: CH.Store.Users
+			collection: CH.Store.users
 		});
 		
 		this.$content.html(this.currentView.render().$el);
