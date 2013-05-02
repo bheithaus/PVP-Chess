@@ -6,6 +6,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.clicks = 0;
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
 		//modify click and drawPieces to implement invert
+		this.radgrad = 
 		
 		// pusher subscribe
 		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
@@ -79,6 +80,28 @@ CH.Views.PlayGame = Backbone.View.extend({
 		}
 	},
 	
+	brownRad: function() {
+		var mid = this.canvas.height / 2;
+		var radgrad = this.ctx.createRadialGradient(mid,mid,2*mid,mid,mid, 50 );
+	    radgrad.addColorStop(0, '#7D7865');
+	    radgrad.addColorStop(0.3, '#7D7865');
+	    radgrad.addColorStop(1, 'rgba(90,90,90,.7)');
+		
+		return radgrad;
+	},
+	
+	whiteRad: function() {
+		var mid = this.canvas.height / 2;
+		var radgrad = this.ctx.createRadialGradient(mid,mid,2*mid,mid,mid, 50 );
+	    radgrad.addColorStop(0, '#F7F7F7');
+	    radgrad.addColorStop(0.3, '#F7F7F7');
+	    radgrad.addColorStop(1, 'rgba(240,240,240,.7)');
+		
+		return radgrad;
+		
+	},
+
+	
 	errorAlert: function (error) {
 	    var alertDiv = $("#game-alert");
 		
@@ -131,7 +154,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	redrawBoard: function() {
-        this.ctx.clearRect(0, 0, length, length);
 		this.drawBlankBoard();
 		this.drawPieces();
 	},
@@ -308,10 +330,12 @@ CH.Views.PlayGame = Backbone.View.extend({
 	drawBlankBoard: function() {
 		var ctx = this.ctx,
 		 length = this.sideLength;
-		
-	    ctx.fillStyle = "rgb(74,74,74)";
+
+ 		ctx.fillStyle = "#FFFFFF";
+        ctx.clearRect(0, 0, length, length);
+	    ctx.fillStyle = this.brownRad();//"rgb(74,74,74)";
 	    ctx.fillRect(0, 0, length, length);
-	    ctx.fillStyle = "rgb(235,235,235)";
+	    ctx.fillStyle = this.whiteRad();//"rgb(235,235,235)";
 		_(8).times(function(i) {
 			_(4).times(function(j) {
 				offset = i % 2 == 0 ? 0 : length/8;
