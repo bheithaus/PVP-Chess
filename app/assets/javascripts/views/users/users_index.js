@@ -23,6 +23,9 @@ CH.Views.UsersIndex = Backbone.View.extend({
 	
 	inviteToGame: function(event) {
 		var opponent_id = $(event.target).data("id");
+		
+		
+		
 		this.newGame = new CH.Models.Game({
 			player_white_id: CH.Store.currentUser.id,
 			player_black_id: opponent_id

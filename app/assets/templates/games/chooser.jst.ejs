@@ -1,11 +1,13 @@
-<div class="navbar">
-  <div class="navbar-inner center">
-	    <ul class="nav" id="chooser">
-			<% games.each(function(game) { %>
-				<li class="#">
-					<a id="sign-out" data-game-id="<%= game.id %>">Game <%= game.id %></a>
-				</li>
-			<% }); %>
-		</ul>
-	</div>
+<div class="well span4">
+	<ul id="chooser" style="list-style: none;">
+		<% games.each(function(game) { %>
+			<li class="#">
+				<a id="sign-out" data-game-id="<%= game.id %>">Game <%= game.id %></a>
+				<% var opponentID = (game.player_white_id == CH.Store.currentUser.ID) ?
+																game.player_black_id : game.player_white_id %>
+				<strong>vs. </strong>
+					 <%= CH.Store.users.findWhere({ id: opponentID }).escape("email") %>
+			</li>
+		<% }); %>
+	</ul>
 </div>
