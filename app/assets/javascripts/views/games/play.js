@@ -129,8 +129,10 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	remoteUpdateError: function(error) {
-		this.errorAlert(error);
-		console.log(error);
+		if (CH.Store.currentUser.get("id") == this.model.get("turn")) {
+			this.errorAlert(error);
+			console.log(error);
+		}
 	},
 	
 	remoteUpdate: function(data) {
