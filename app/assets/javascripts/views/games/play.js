@@ -2,13 +2,13 @@ CH.Views.PlayGame = Backbone.View.extend({
 
 	initialize: function(options){
 		this.setupCanvas(options);
+		this.loadImages();
 		//modify click and drawPieces to implement invert
 		console.log(this.model);
 
 				
 		// callbacks
 		this.installRemoteUpdateCallbacks();
-		this.toggleCanvasClickListener();
 		
 		this.mobileResponder();
 	},
@@ -17,9 +17,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.canvas = options.$canvas.get(0);
 		this.ctx = this.canvas.getContext("2d");
 		this.clicks = 0;
-		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
 		//invert display so user is always on bottom of board
-		
+		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
+		this.canvas.onselectstart = function () { return false; }
 	},
 	
 	mobileResponder: function() {
@@ -112,7 +112,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 
 	
 	errorAlert: function (error) {
-	    var alertDiv = $("#game-alert");
+	    var alertDiv = this.$("#game-alert");
 		
 		alertDiv.text(error);
 		alertDiv.addClass("in");		
@@ -129,7 +129,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	inCheckAlert: function() {
 		if (this.myTurn()) {
-		    var alertDiv = $("#game-alert");
+		    var alertDiv = this.$("#game-alert");
 			 	
 			alertDiv.text("You are in Check!");
 			alertDiv.addClass("in");
@@ -138,7 +138,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	clearCheckAlert: function () {
-	    var alertDiv = $("#game-alert");
+	    var alertDiv = this.$("#game-alert");
 		 	
 		alertDiv.text();
 		alertDiv.removeClass("in");
@@ -172,17 +172,23 @@ CH.Views.PlayGame = Backbone.View.extend({
 		} else {
 			this.clearCheckAlert();
 		}
+		
+		console.log("is it my turn");
+		console.log(CH.Store.currentUser.id);
+		console.log(this.model.get("turn"));
+		this.toggleCanvasClickListener();
+		
 		this.model.trigger('updated_remotely');
 	},
 	
 	redrawBoard: function() {
 		this.drawBlankBoard();
-		this.drawPieces();
+		this.loadImages();
 	},
 	
 	toggleWaiting: function() {
 		var  waiting = !this.myTurn(),
-	    	alertDiv = $("#game-alert");
+	    	alertDiv = this.$("#game-alert");
 		
 		if (waiting) {
 			console.log("awaiting opp move");
@@ -192,21 +198,21 @@ CH.Views.PlayGame = Backbone.View.extend({
 			alertDiv.text();
 			alertDiv.removeClass("in");
 		}
-		
 	},
 	
 	toggleCanvasClickListener: function() {
 		var clickable = this.myTurn();
 		console.log(clickable);
+		if (!this.clickCallback) {
+			this.clickCallback = this.click.bind(this);
+		}
 		
 		if (clickable) {
 			console.log("turn on canvas clickable");
-			
-			var clickCallback = this.click.bind(this);
-			this.canvas.addEventListener('click', clickCallback, false);
+			this.canvas.addEventListener('click', this.clickCallback, false);
 		} else {
 			console.log("turn off canvas clickable");
-			this.canvas.removeEventListener('click');
+			this.canvas.removeEventListener('click', this.clickCallback);
 		}
 		this.toggleWaiting();
 	},
@@ -268,6 +274,12 @@ CH.Views.PlayGame = Backbone.View.extend({
 		return { X : x, Y : y };
 	},
 	
+	setMessages: function() {
+		if (this.model.get("in_check")) {
+			this.inCheckAlert();
+		}
+	},
+	
 	render: function() {
 		var ctx = this.ctx,
 			length = this.sideLength;
@@ -279,14 +291,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 					
 		this.$el.append(statsView.render().$el);				
 
-		if (this.model.get("in_check")) {
-			var that = this;
-			window.setTimeout(function(){
-				
-				that.inCheckAlert();
-			}, 300);
-		}
-								
+		this.setMessages();
+		
+		this.toggleCanvasClickListener();					
 		// this.$el.html(statsView.render().$el);
 		this.$el.append(this.canvas);
 
@@ -402,18 +409,35 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	loadImages: function() {
 		if (!CH.Store.imgs) {
-			// CH.Store.imgs = 
-			
-			
+			var piece,
+				that = this;
+			CH.Store.loadedImgsCount = 0;
+			CH.Store.imgs = {};
+			_(["b", "w"]).each(function(color) {
+				_(["R","P","K","B","Q","H"]).each(function(type){
+					piece = color + type
+					CH.Store.imgs[piece] = new Image();
+					CH.Store.imgs[piece].src =  '/assets/' + piece + '.png';
+					CH.Store.imgs[piece].onload = function() {
+						CH.Store.loadedImgsCount++;
+						if (CH.Store.loadedImgsCount == 12) {
+							that.drawPieces();
+						} else {
+							console.log(CH.Store.loadedImgsCount)
+						}
+					}
+				});
+			});
+		} else {
+			this.drawPieces();
 		}
-			
+		
+		return CH.Store.imgs;
 	},
 	
 	drawPieces: function () {
 		// I would like to draw the board so that the user is always at the bottom....
 		var o, m;
-		
-		console.log(this.sideLength);
 		
 		if (this.invert) {
 			o = this.sideLength - 58;
@@ -423,7 +447,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 			m = -1;
 		}
 		
-		var  imgs = {},
+		var  imgs = CH.Store.imgs,
 			 board = this.model.get("parsed_board"),
 			 ctx = this.ctx,
 			 sq_pos = this.sideLength/8,
@@ -432,21 +456,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		_(board).each(function(row, i) {
 			_(row).each(function(sq, j) {
 				if (sq != "_") {
-					imgs[sq] = new Image();
-					imgs[sq].onload = function () {
-						// console.log("x")
-// 						console.log(o)
-// 						console.log(m)
-// 						console.log(sq);
-// 						console.log(o - m * (j * sq_pos + d));
-// 						console.log("y")
-// 						console.log(o - m * (j * sq_pos + d));
-// 						
-						
-						
-						ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m *(i * sq_pos + d));
-					}
-					imgs[sq].src = '/assets/' + sq + '.png';
+					ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m *(i * sq_pos + d));
 				}
 			});
 		});

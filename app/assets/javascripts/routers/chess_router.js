@@ -7,10 +7,6 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		console.log("running before function on route " + route);
 		console.log("params " + params);
 		
-		// if (!CH.Store.currentUser) {
-	// 		Backbone.history.navigate("/users/sign_in", { trigger: true })
-	// 	}
-		
 		if (this.currentView) {
 			this.currentView.remove();
 		}
@@ -26,23 +22,17 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	},
 	
 	game: function(id) {
-		console.log(id);
-		var gamesView;
-		var game = CH.Store.currentUser.get("games").find(function(model) {
-			console.log(model);
-			return model.get("id") == id;
-		}) || null;
-		console.log(game);
+		console.log(typeof(CH.Store.currentUser.get("games")));
 		this.currentView = new CH.Views.Game({
 			collection: CH.Store.currentUser.get("games"),
-			model: game
+			gameID: parseInt(id)
 		});
 		
 		this.$content.html(this.currentView.render().$el);
 	},
 	
 	chat: function() {
-		
+		//stub
 	},
 	
 	welcome: function(){		

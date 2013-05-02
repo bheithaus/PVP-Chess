@@ -7,7 +7,6 @@ window.CH = {
 	},
 	Store: {
 		Chat: {}
-		
 	},
 
 	init: function($navbar, $content, currentUserData, usersData) {
@@ -76,16 +75,16 @@ window.CH = {
 	
 	showGameInvite: function(newGameData) {
 		this.Store.currentUser.get("games").add(newGameData);
-		var      userEmail = CH.Store.users.findWhere({ id: parseInt(newGameData.player_white_id) }).escape("email");
-		var $invitedButton = $('<button id="invited">Join</button>');
-		var		  $invited = $('#invited');
-				  
+		var      userEmail = CH.Store.users.findWhere({ id: parseInt(newGameData.player_white_id) }).escape("email"),
+			$invitedButton = $('<button id="invited">Join</button>'),
+				  $invited = $('#invited'),
+  				    gameID = newGameData.id;
+						  
 		$invited.text("You have been invited to a game by " + userEmail)
-					 .append($invitedButton.data("id", newGameData.id));
+					 .append($invitedButton);
 		$invitedButton.on('click', function(){
 			$invited.empty();
-			Backbone.history.navigate("games/" + $invitedButton.data("id"), { trigger: true });
+			Backbone.history.navigate("games/" + gameID, { trigger: true });
 		});
-		console.log(data);
 	}
 };

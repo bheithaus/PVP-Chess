@@ -1,24 +1,20 @@
 CH.Views.Game = Backbone.View.extend({
 	initialize: function(options) {
 		var that = this;
-		
-		that.model = options.model;
-		
-		that.newGame = new CH.Models.Game({
-			player_white_id: CH.Store.currentUser.id
+		console.log(options);
+		that.gameID = options.gameID;
+		that.collection = options.collection;
+
+		that.collection.fetch({
+			success: function() {
+				if (that.gameID) {
+					that.loadGameByRoute();
+				} else {
+					var chooserButton = $("<button id='game-chooser'>Choose a Game</button>")
+					that.$el.prepend(chooserButton);
+				}
+			}
 		});
-		that.newGameButton = new CH.Views.NewGame({
-			model: that.newGame
-		});
-		
-		console.log(that);
-		
-		if (that.model) {
-			console.log(that.model);
-			this.playGame({
-				model: that.model
-			});
-		}
 	},
 	
 	events: {
@@ -30,21 +26,27 @@ CH.Views.Game = Backbone.View.extend({
 	render: function() {
 		var that = this;
 		
-		CH.Store.currentUser.get("games").fetch({
-			success: function() {
-				var chooserButton = $("<button id='game-chooser'>Choose a Game</button>")
-				that.$el.prepend(chooserButton);
-			}
-		});
-		
 		if (that.currentView) {
-			
 			that.$el.html(that.currentView.render().$el);
 		}
 		
-		that.$el.prepend(that.newGameButton.render().$el);
+		//that.$el.prepend(that.newGameButton.render().$el);
 		
 		return that;
+	},
+	
+	loadGameByRoute: function() {
+		var that = this;
+		
+		that.game = that.collection.findWhere({
+			id: that.gameID
+		});
+		
+		console.log(that.game);
+		
+		this.playGame({
+			model: that.game
+		});		
 	},
 
 	gameChooser: function() {
