@@ -27,7 +27,6 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		var gamesView;
 		var game = CH.Store.currentUser.get("games").findWhere({id: parseInt(id)}) || null;
 
-
 		this.currentView = new CH.Views.Game({
 			collection: CH.Store.currentUser.get("games"),
 			model: game

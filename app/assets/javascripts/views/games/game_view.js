@@ -56,8 +56,8 @@ CH.Views.Game = Backbone.View.extend({
 			game = this.collection.findWhere({
 				id: id
 			});
+	//		Backbone.history.navigate("#games/" + id);
 		} else {
-			Backbone.history.navigate("#games/" + id);
 			game = options.model;
 		}
 		

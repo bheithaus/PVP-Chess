@@ -6,7 +6,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.clicks = 0;
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
 		//modify click and drawPieces to implement invert
-		this.radgrad = 
 		
 		// pusher subscribe
 		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
@@ -22,9 +21,8 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.gameChannel.bind('remote_update', remoteUpdateCallback);
 		this.gameChannel.bind('remote_update_error', remoteUpdateErrorCallback);
 		
-		this.listenTo(this.model, 'remote_update', redrawCallback);  //replace with animateCallback :)
+		this.listenTo(this.model, 'updated_remotely', redrawCallback);  //replace with animateCallback :)
 		this.canvas.addEventListener('click', clickCallback, false);
-		
 		
 		// mobile resize and orientation handlers
 		this.rc = 0;  // resize counter
@@ -60,14 +58,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		} else {
 			cheight = cwidth;
 		}
-		// 
-		// console.log("c height");
-		// console.log(cheight);
-		// console.log("c width");
-		// 
-		// console.log(cwidth);
-
-		// set canvas width and height
 		$(this.canvas).attr('width', cwidth);
 		$(this.canvas).attr('height', cheight)
 		this.sideLength = this.canvas.height;
@@ -150,7 +140,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		if (this.model.get("in_check")) {
 			this.inCheckAlert();
 		}
-		this.model.trigger('remote_update');
+		this.model.trigger('updated_remotely');
 	},
 	
 	redrawBoard: function() {
