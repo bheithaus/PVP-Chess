@@ -1,8 +1,5 @@
 CH.Views.PlayGame = Backbone.View.extend({
-	events: {
-		"keypress": "handleChatInput"
-	},
-	
+		
 	initialize: function(options){
 		// pusher subscribe
 		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
@@ -85,31 +82,13 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	installChatCallbacks: function() {
 		console.log("installing chat callbacks and input handler");
+		
 		var channel = this.gameChannel,
 	     discussion = this.$("#discussion");
 		
 		this.gameChannel.bind('client-chat', function(chat) {
-			discussion.append('<li class="you">' + chat.text + '</li>');
+			discussion.append('<dt>' + chat.user + '</dt><dd class="you">' + chat.text + '</dd>');
 		});
-	},
-	
-	handleChatInput: function(event) {
-		var	   channel = this.gameChannel;
-		    discussion = this.$("#discussion"),
-				 input = this.$("#chat-input");
-			console.log(event.keyCode);
-			if (event.keyCode == 13) {
-				var chat = input.val();
-				var triggered = channel.trigger('client-chat', { text: chat });
-				setTimeout(function() {
-					if (triggered) {
-						discussion.append('<li class="me">' + chat + '</li>');
-					}
-				}, 300);
-				input.val("");
-			}
-	
-		
 	},
 	
 	myTurn: function() {
@@ -314,7 +293,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 								model: this.model
 							});
 		
-		var chatView = new CH.Views.Chat.InGame();
+		var chatView = new CH.Views.Chat.InGame({ gameChannel: this.gameChannel });
 		
 		this.$el.append(statsView.render().$el);				
 
