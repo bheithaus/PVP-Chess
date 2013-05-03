@@ -15,6 +15,11 @@
 			<%= user.escape("email") %>
 			<span class="blue"><i class="icon-globe"></i></span>
 		</li>
+		<% } else { %>
+		<li>
+			<%= user.escape("email") %> (You)
+			<span class="blue"><i class="icon-globe"></i></span>
+		</li>
 		<% } %>
 	
 	<% }); %>

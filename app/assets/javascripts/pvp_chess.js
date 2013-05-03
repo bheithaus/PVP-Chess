@@ -91,16 +91,19 @@ window.CH = {
 	},
 	
 	showGameInvite: function(newGameData) {
+		console.log("invited to game");
 		this.Store.currentUser.get("games").add(newGameData);
 		var      userEmail = CH.Store.users.findWhere({ id: parseInt(newGameData.player_white_id) }).escape("email"),
-			$invitedButton = $('<button id="invited">Join</button>'),
+			$invitedButton = $('<button id="invited" class="btn btn-large">Join</button>'),
 				  $invited = $('#invited'),
   				    gameID = newGameData.id;
-						  
-		$invited.text("You have been invited to a game by " + userEmail)
+		
+		$invited.addClass("yellow-bg");				  
+		$invited.html("<h3>You have been invited to a game by " + userEmail + "</h3>")
 					 .append($invitedButton);
 		$invitedButton.on('click', function(){
 			$invited.empty();
+			$invited.removeClass("yellow-bg");
 			Backbone.history.navigate("games/" + gameID, { trigger: true });
 		});
 	}
