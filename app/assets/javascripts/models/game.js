@@ -2,6 +2,7 @@ CH.Models.Game = Backbone.RelationalModel.extend({
 	initialize: function(data) {
 		this.player_white_id = data.player_white_id;
 		this.player_black_id = data.player_black_id;
+				   this.name = data.name;
 	},
 	
 	urlRoot: "/online_games",
@@ -23,7 +24,8 @@ CH.Models.Game = Backbone.RelationalModel.extend({
 			 			},
 			online_game: {
 				player_white_id: this.player_white_id,
-				player_black_id: this.player_black_id
+				player_black_id: this.player_black_id,
+						   name: this.name
 			}
 		};
 	},

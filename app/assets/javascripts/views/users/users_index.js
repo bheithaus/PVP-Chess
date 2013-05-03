@@ -6,6 +6,7 @@ CH.Views.UsersIndex = Backbone.View.extend({
 		this.listenTo(CH.Store.onlineUsers, 'add', renderCallback);
 		this.listenTo(CH.Store.onlineUsers, 'remove', renderCallback);
 	},
+	
 	events: {
 		'click button#invite': "inviteToGame"
 	},
@@ -22,20 +23,26 @@ CH.Views.UsersIndex = Backbone.View.extend({
 	},
 	
 	inviteToGame: function(event) {
-		var opponent_id = $(event.target).data("id");
+		var opponent_id = $(event.target).data("id"),
+				   that = this,
+			$inviteModal = $('#invite-modal');
 		
+		$inviteModal.modal('show');
 		
-		
-		this.newGame = new CH.Models.Game({
-			player_white_id: CH.Store.currentUser.id,
-			player_black_id: opponent_id
-		});
-		this.newGame.save({}, {
-			success: function(newGame) {
-				console.log('yayu!');
-				CH.Store.currentUser.get("games").add(newGame);
-				Backbone.history.navigate("games/"+newGame.id, {trigger: true})
-			}
+		$('#confim-invite').on('click', function() {
+			var newGame = new CH.Models.Game({
+				player_white_id: CH.Store.currentUser.id,
+				player_black_id: opponent_id,
+						   name: $("#game-name").val()
+			});
+			newGame.save({}, {
+				success: function(newGameData) {
+					console.log('yayu!');
+					CH.Store.currentUser.get("games").add(newGameData);
+					Backbone.history.navigate("games/"+newGameData.id, {trigger: true});
+				}
+			});
+			$inviteModal.modal('hide');
 		});
 	}
 });

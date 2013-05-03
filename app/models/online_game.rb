@@ -3,7 +3,7 @@ p Dir.pwd
 require './lib/chess/game.rb'
 
 class OnlineGame < ActiveRecord::Base  
-  attr_accessible :player_black_id, :player_white_id, :board
+  attr_accessible :player_black_id, :player_white_id, :board, :name
   
   def self.new_game(params)
     game = Game.new(params)

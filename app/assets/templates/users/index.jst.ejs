@@ -1,34 +1,53 @@
-<h1>Users</h1>
+<div class="text-bg span3">
+	<h1>Players</h1>
+</div>
+<div class="well span6">
+	<h2>Online</h2>
+	<ul style="list-style:none;">
 
-<h2>Online</h2>
-<ul style="list-style:none;">
+	<% var onlineUserIDs = []; %>
 
-<% var onlineUserIDs = []; %>
-
-<% onlineUsers.each(function (user) { %>
-	<% if (user.id != CH.Store.currentUser.id) { %>
-		<% onlineUserIDs.push(user.get("id")); %>
-	<li>
-		<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
-		<%= user.escape("email") %>
-		<span class="blue"><i class="icon-globe"></i></span>
-	</li>
-	<% } %>
+	<% onlineUsers.each(function (user) { %>
+		<% if (user.id != CH.Store.currentUser.id) { %>
+			<% onlineUserIDs.push(user.get("id")); %>
+		<li>
+			<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+			<%= user.escape("email") %>
+			<span class="blue"><i class="icon-globe"></i></span>
+		</li>
+		<% } %>
 	
-<% }); %>
+	<% }); %>
 
+	</ul>
+
+	<h2>Offline</h2>
+	<ul style="list-style:none;">
+
+	<% offlineUsers.each(function (user) { %>
+		<% if (user.get("id") != CH.Store.currentUser.id && onlineUserIDs.indexOf(user.get("id")) == -1 ) { %>
+		<li>
+			<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+			<%= user.escape("email") %>
+
+		</li>
+		<% } %>
+	
+	<% }); %>
 </ul>
 
-<h2>Offline</h2>
-<ul style="list-style:none;">
-
-<% offlineUsers.each(function (user) { %>
-	<% if (user.get("id") != CH.Store.currentUser.id && onlineUserIDs.indexOf(user.get("id")) == -1 ) { %>
-	<li>
-		<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
-		<%= user.escape("email") %>
-
-	</li>
-	<% } %>
-	
-<% }); %>
+<div id="invite-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>New Game</h3>
+  </div>
+  <div class="modal-body">
+	  <label>Optional Name
+		  <input type="text" id="game-name" placeholder="Give this Game a Name">
+	  </label>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Cancel</a>
+    <a href="#" id="confim-invite" class="btn btn-primary">Invite Friend</a>
+  </div>
+</div>
