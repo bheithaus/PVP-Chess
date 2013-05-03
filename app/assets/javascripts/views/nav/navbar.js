@@ -1,11 +1,5 @@
 CH.Views.Navbar = Backbone.View.extend({
-	initialize:function (router) {
-		var renderCallback = this.render.bind(this);
-		this.listenTo(router, 'route', renderCallback);
-	},
-	
 	events: {
-		"click a": "selectNewTab",
 		"click #sign-out": "signOut",
 	},
 	
@@ -17,14 +11,6 @@ CH.Views.Navbar = Backbone.View.extend({
 		that.$el.html(renderedContent);
 		
 		return that;
-	},
-	
-	selectNewTab: function(event) {
-		$("ul.nav").children().filter("li").removeClass("active");
-		$(event.target).parent().addClass("active");
-		if($(event.target).prop("id") === "sign-out") {
-			console.log('yeaaa!!');
-		}
 	},
 	
 	signOut: function() {

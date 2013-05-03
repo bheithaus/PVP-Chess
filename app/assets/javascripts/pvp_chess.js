@@ -63,10 +63,9 @@ window.CH = {
 		that.landingPage($content);
 		
 		this.router = new CH.Routers.ChessRouter($content);
+		that.makeNavbar($navbar);
 		
 		Backbone.history.start();
-		
-		that.makeNavbar($navbar);
 	},
 	
 	landingPage: function($content) {

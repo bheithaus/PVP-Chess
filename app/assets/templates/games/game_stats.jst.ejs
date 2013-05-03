@@ -1,5 +1,5 @@
 <div class="white-bg span8">
-	<p><strong><%= game.escape("name") %></strong> -- <strong>Opponent | </strong><%= opponentEmail %></p>
+	<p><strong><%= game.escape("name") || "Game " + game.escape("id") %></strong> <--> <strong>Opponent | </strong><%= opponentEmail %></p>
 	<div id="game-alert" class="center alert fade span6" data-alert="alert">hopefully you wont see this</div>
 </div>
 <br>

@@ -4,8 +4,18 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 	},
 	
 	before: function(route, params) {
-		console.log("running before function on route " + route);
-		console.log("params " + params);
+		console.log(route);
+		console.log(params);
+		console.log(route.toString().split("/")[0]);
+		
+		
+		if (!params.length) {
+			this.selectNewTab(route);
+		} else {
+			this.selectNewTab(
+				route.toString().split("/")[0]
+			);
+		}
 		
 		if (this.currentView) {
 			this.currentView.remove();
@@ -16,9 +26,15 @@ CH.Routers.ChessRouter = Backbone.Router.extend({
 		"welcome": "welcome",
 		"home": "home",
 		"players": "usersIndex",
-		"chat": "chat",
 		"games": "game",
 		"games/:id": "game"
+	},
+	
+	selectNewTab: function(route) {
+		console.log("#"+route);
+		
+		$("ul.nav").children().filter("li").removeClass("active");
+		$("li#" + route).addClass("active");
 	},
 	
 	game: function(id) {
