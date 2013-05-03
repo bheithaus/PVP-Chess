@@ -14,7 +14,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		// callbacks
 		this.installRemoteUpdateCallbacks();
 		
-		this.mobileResponder();
 	},
 	
 	setupCanvas: function(options) {
@@ -24,6 +23,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 		//invert display so user is always on bottom of board
 		this.invert = (this.model.player_white_id == CH.Store.currentUser.id);
 		this.canvas.onselectstart = function () { return false; }
+		
+		//try to make it responsive to Mobile Screens
+		this.mobileResponder();
 	},
 	
 	mobileResponder: function() {
@@ -44,10 +46,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		window.onorientationchange = function() {
 		  clearTimeout(otimeout);
 		  otimeout = setTimeout(that.orientationChange.bind(that), 50);
-		}
-		if (ios) {
-		  // increase height to get rid off ios address bar
-		  $("#container").height($(window).height() + 60)
 		}
 		
 		var width = window.screen.availWidth;
@@ -138,7 +136,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		return radgrad;
 		
 	},
-
 	
 	errorAlert: function (error) {
 	    var alertDiv = this.$("#game-alert");
@@ -194,7 +191,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	remoteUpdate: function(data) {
 		console.log('remote_update success');
-		console.log(data);
 		this.model.set(this.model.parse(data));
 		if (this.model.get("in_check")) {
 			this.inCheckAlert();
@@ -202,9 +198,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 			this.clearCheckAlert();
 		}
 		
-		console.log("is it my turn");
-		console.log(CH.Store.currentUser.id);
-		console.log(this.model.get("turn"));
 		this.toggleCanvasClickListener();
 		
 		this.model.trigger('updated_remotely');
@@ -329,7 +322,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.installChatCallbacks();
 		this.toggleCanvasClickListener();
 		this.setMessages();
-		
 		
 		return this;
 	},
@@ -480,16 +472,17 @@ CH.Views.PlayGame = Backbone.View.extend({
 			m = -1;
 		}
 		
-		var  imgs = CH.Store.imgs,
+		var   imgs = CH.Store.imgs,
 			 board = this.model.get("parsed_board"),
-			 ctx = this.ctx,
-			 sq_pos = this.sideLength/8,
- 				d = this.sideLength/70;
+			   ctx = this.ctx,
+		    sq_pos = this.sideLength/8,
+	     pieceSide = this.sideLength / 10,
+ 		  		 d = this.sideLength/70;
 			 
 		_(board).each(function(row, i) {
 			_(row).each(function(sq, j) {
 				if (sq != "_") {
-					ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m *(i * sq_pos + d));
+					ctx.drawImage(imgs[sq], o - m * (j * sq_pos + d), o - m * (i * sq_pos + d), pieceSide, pieceSide);
 				}
 			});
 		});
