@@ -1,5 +1,8 @@
 CH.Views.PlayGame = Backbone.View.extend({
-		
+	events: {
+		"click button#show-numbers": "toggleShowNumbers"
+	},
+	
 	initialize: function(options){
 		// pusher subscribe
 		this.gameChannel = CH.pusher.subscribe('private-game-' + this.model.id);
@@ -13,6 +16,12 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.setupVoiceHandler();
 	},
 	
+	toggleShowNumbers: function() {
+		this.showNumbers = !this.showNumbers;
+		console.log(this.showNumbers);
+		this.redrawBoard();
+	},
+	
 	setupVoiceHandler: function() {
 		var that = this;
 		
@@ -23,7 +32,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		    console.log(speech);
 			
 			that.handleVoiceMove(speech);
-			
 		};
 	},
 	
@@ -370,6 +378,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 							});
 		
 		var chatView = new CH.Views.Chat.InGame({ gameChannel: this.gameChannel });
+		var voiceView = new CH.Views.VoiceInput();
 		
 		this.$el.append(statsView.render().$el);
 		
@@ -377,7 +386,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.$el.append(this.canvas);
 
 		//voice handler
-		this.$el.append($('<input type="search" id="search" name="q" x-webkit-speech speech required onspeechchange="makeVoiceMove();" onwebkitspeechchange="makeVoiceMove();" size=100>'));
+		this.$el.append(voiceView.render().$el);
 		
 		this.$el.append(chatView.render().$el);
 		
@@ -441,18 +450,34 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	drawBlankBoard: function() {
-		var ctx = this.ctx,
-		 length = this.sideLength;
+		var x, y,
+			   that = this,
+			    ctx = this.ctx,
+			 length = this.sideLength,
+		 whiteStyle = this.whiteRad();
 
  		ctx.fillStyle = "#FFFFFF";
         ctx.clearRect(0, 0, length, length);
 	    ctx.fillStyle = this.brownRad(); //"rgb(74,74,74)";
 	    ctx.fillRect(0, 0, length, length);
-	    ctx.fillStyle = this.whiteRad(); //"rgb(235,235,235)";
+	    ctx.fillStyle = whiteStyle; //"rgb(235,235,235)";
+		
 		_(8).times(function(i) {
-			_(4).times(function(j) {
-				offset = i % 2 == 0 ? 0 : length/8;
-			    ctx.fillRect(j*length/4 + offset, i*length/8, length/8, length/8);
+			_(8).times(function(j) {
+				x = j*length/8;
+				y = i*length/8;
+				if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
+					ctx.fillStyle = whiteStyle;
+				    ctx.fillRect(x, y, length/8, length/8);
+				}
+				console.log(this.showNumbers)
+				if (that.showNumbers) {
+					ctx.lineWidth = 1;
+					ctx.fillStyle = "#E02B4C";
+					ctx.lineStyle = "#ffff00";
+					ctx.font = "20px sans-serif";
+					ctx.fillText((i + 1) + "" + (j+1), x+5, y+20);
+				}
 			});
 		});
 	},

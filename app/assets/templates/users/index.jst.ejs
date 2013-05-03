@@ -11,7 +11,7 @@
 		<% if (user.id != CH.Store.currentUser.id) { %>
 			<% onlineUserIDs.push(user.get("id")); %>
 		<li>
-			<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+			<button class="btn" id="invite" data-id="<%= user.escape("id") %>">invite</button>
 			<%= user.escape("email") %>
 			<span class="blue"><i class="icon-globe"></i></span>
 		</li>
@@ -32,7 +32,7 @@
 	<% offlineUsers.each(function (user) { %>
 		<% if (user.get("id") != CH.Store.currentUser.id && onlineUserIDs.indexOf(user.get("id")) == -1 ) { %>
 		<li>
-			<button id="invite" data-id="<%= user.escape("id") %>">invite</button>
+			<button class="btn" id="invite" data-id="<%= user.escape("id") %>">invite</button>
 			<%= user.escape("email") %>
 
 		</li>
