@@ -1,10 +1,14 @@
 @import "bootstrap";
-@import "bootstrap-responsive";
 
 body {
 	margin-top: 50px;
 	background: url("chess1.jpg");
-	// make this image bigger!
+}
+
+@import "bootstrap-responsive";
+
+.brand {
+	margin-left: 50px;
 }
 
 .text-bg {

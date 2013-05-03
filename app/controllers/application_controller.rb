@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
                                             self.class == Devise::SessionsController ||
                                             self.class == Devise::RegistrationsController ||
                                             self.class == Users::OmniauthCallbacksController ||
-                                            self.class == Devise::PasswordsController
+                                            self.class == Devise::PasswordsController ||
+                                            self.class == RegistrationsController
   end
 end

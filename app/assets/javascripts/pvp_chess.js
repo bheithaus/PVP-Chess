@@ -104,7 +104,9 @@ window.CH = {
 		$invitedButton.on('click', function(){
 			$invited.empty();
 			$invited.removeClass("yellow-bg");
-			Backbone.history.navigate("games/" + gameID, { trigger: true });
+			setTimeout(function() {
+				Backbone.history.navigate("games/" + gameID, { trigger: true });
+			},300);
 		});
 	}
 };

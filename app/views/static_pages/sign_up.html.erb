@@ -2,17 +2,16 @@
 <div id="flash"></div>
 <div class="well span6">
 	<h1>
-  	<%= @unified_word %>
+  		<%= @unified_word %>
 	</h1>
-</div>
+</div><br>
 
 <p> <%= @client_ip %> </p>
 <label>
 	Enter this word to learn all my secrets
-	<input id="cap-field" type="text" placeholder="enter here">
+	<input id="cap-field" type="text" placeholder="enter secret here">
 </label>
 <button id="cap">Try</button>
-
 
 <script>
 	$(function() {
