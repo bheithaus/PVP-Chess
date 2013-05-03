@@ -8,7 +8,9 @@ CH.Views.UsersIndex = Backbone.View.extend({
 	},
 	
 	events: {
-		'click button#invite': "inviteToGame"
+		'click button#invite': 'inviteToGame',
+		'keypress input': 'confirmInvite',
+		'click a#confirm-invite': 'confirmInvite'
 	},
 	
 	render: function() {
@@ -23,26 +25,45 @@ CH.Views.UsersIndex = Backbone.View.extend({
 	},
 	
 	inviteToGame: function(event) {
-		var opponent_id = $(event.target).data("id"),
-				   that = this,
-			$inviteModal = $('#invite-modal');
+		var $inviteModal = $('#invite-modal');
+		this.opponentID = $(event.target).data("id");
 		
 		$inviteModal.modal('show');
+				// 
+		// $('#confim-invite').on('click', function() {
+		// 	var newGame = new CH.Models.Game({
+		// 		player_white_id: CH.Store.currentUser.id,
+		// 		player_black_id: opponent_id,
+		// 				   name: $("#game-name").val()
+		// 	});
+		// 	newGame.save({}, {
+		// 		success: function(newGameData) {
+		// 			console.log('yayu!');
+		// 			CH.Store.currentUser.get("games").add(newGameData);
+		// 			Backbone.history.navigate("games/"+newGameData.id, {trigger: true});
+		// 		}
+		// 	});
+		// 	$inviteModal.modal('hide');
+		// });
+	},
+	
+	confirmInvite: function() {
+		var  $inviteModal = $('#invite-modal');
 		
-		$('#confim-invite').on('click', function() {
-			var newGame = new CH.Models.Game({
-				player_white_id: CH.Store.currentUser.id,
-				player_black_id: opponent_id,
-						   name: $("#game-name").val()
-			});
-			newGame.save({}, {
-				success: function(newGameData) {
-					console.log('yayu!');
-					CH.Store.currentUser.get("games").add(newGameData);
-					Backbone.history.navigate("games/"+newGameData.id, {trigger: true});
-				}
-			});
-			$inviteModal.modal('hide');
+		var newGame = new CH.Models.Game({
+			player_white_id: CH.Store.currentUser.id,
+			player_black_id: this.opponentID,
+					   name: $("#game-name").val()
 		});
+		
+		newGame.save({}, {
+			success: function(newGameData) {
+				console.log('yayu!');
+				CH.Store.currentUser.get("games").add(newGameData);
+				Backbone.history.navigate("games/"+newGameData.id, { trigger: true });
+			}
+		});
+		
+		$inviteModal.modal('hide');
 	}
 });
