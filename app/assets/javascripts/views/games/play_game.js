@@ -239,9 +239,14 @@ CH.Views.PlayGame = Backbone.View.extend({
 		this.toggleWaiting();
 	},
 	
+	pieceAt: function(pos) {
+		return this.model.get("parsed_board")[pos[0]][pos[1]] != "_";
+	},
+	
 	click: function(e) {
 		//o and m are the inverters
-		var o, m;
+		var o, m,
+			that = this;
 		
 		if (this.invert) {
 			o = 7;
@@ -258,31 +263,30 @@ CH.Views.PlayGame = Backbone.View.extend({
 				y = o - m * Math.floor(mouse.Y / sqLength);
 			
 		if (this.clicks === 0) {
-			this.model.from = [y, x];
-			this.highlightSquare([y, x]);
+			if (this.pieceAt([y, x])) {
+				this.model.from = [y, x];
+				this.highlightSquare([y, x]);
+				this.clicks = 1;
+			}
 		} else {
 			this.model.to = [y, x];
 			this.model.mover_id = CH.Store.currentUser.id;
 			this.model.save({
 				success:function(model) {
 					that.toggleCanvasClickListener();
-					
 					console.log(model);
 				},
-				
 				error: function(model) {
 					
 				}
 			});
+			that.clicks = 0;
+			
 			console.log("from");
 			console.log(this.model.from);
 			console.log("to");
-			
 			console.log(this.model.to);
 		}
-		 
- 		this.clicks = this.clicks == 1 ? 0 : 1;
-		 
 	    console.log("Mouse X: " + mouse.X + " mouse Y: " + mouse.Y);
 	},
 	
@@ -327,6 +331,8 @@ CH.Views.PlayGame = Backbone.View.extend({
 	},
 	
 	animate: function(from, to) {
+		// not implemented
+		
 		var o, m, fromColor, toColor, 
 			board = this.model.get("parsed_board"),
 		   length = this.sideLength;
@@ -374,46 +380,41 @@ CH.Views.PlayGame = Backbone.View.extend({
 	    ctx.fillRect(o - m * (j*length/8), o - m * (i*length/8), length/8, length/8);
 		ctx.globalAlpha = 1;
 	},
-	
-	unHighlightSquare: function(sq) {
-		var o, m,
-			i = sq[0],
-			j = sq[1],
-			ctx = this.ctx,
-			board = this.model.get("parsed_board");
-			length = this.sideLength;
-			
-		if (this.invert) {
-			o = this.sideLength - 58;
-			m = 1;
-		} else {
-			o = 0;
-			m = -1;
-		}
-		ctx.globalAlpha = 0.2;
-		
-	    ctx.fillStyle = "rgb(49,92,235)";
-		
-	    ctx.fillRect(j*length/8, i*length/8, length/8, length/8);
-		ctx.globalAlpha = 1;
-	},
-	
-	squareColor: function(sq) {
-		var o, m,
-			length = this.sideLength;
-		if (this.invert) {
-			o = this.sideLength - 58;
-			m = 1;
-		} else {
-			o = 0;
-			m = -1;
-		}
-		
-		
-		
-		
-		
-	},
+		// 
+	// unHighlightSquare: function(sq) {
+	// 	var o, m,
+	// 		i = sq[0],
+	// 		j = sq[1],
+	// 		ctx = this.ctx,
+	// 		board = this.model.get("parsed_board");
+	// 		length = this.sideLength;
+	// 		
+	// 	if (this.invert) {
+	// 		o = this.sideLength - 58;
+	// 		m = 1;
+	// 	} else {
+	// 		o = 0;
+	// 		m = -1;
+	// 	}
+	// 	ctx.globalAlpha = 0.2;
+	// 	
+	//     ctx.fillStyle = "rgb(49,92,235)";
+	// 	
+	//     ctx.fillRect(j*length/8, i*length/8, length/8, length/8);
+	// 	ctx.globalAlpha = 1;
+	// },
+	// 
+	// squareColor: function(sq) {
+	// 	var o, m,
+	// 		length = this.sideLength;
+	// 	if (this.invert) {
+	// 		o = this.sideLength - 58;
+	// 		m = 1;
+	// 	} else {
+	// 		o = 0;
+	// 		m = -1;
+	// 	}
+	// },
 	
 	drawBlankBoard: function() {
 		var ctx = this.ctx,

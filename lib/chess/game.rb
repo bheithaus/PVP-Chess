@@ -56,7 +56,6 @@ class Game
       next_turn   
     end
     #board.print
-   
   end
 
   def next_turn

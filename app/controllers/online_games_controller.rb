@@ -34,6 +34,7 @@ class OnlineGamesController < ApplicationController
       @online_game.execute_move(params[:move])
     rescue Exception => e
       p "rescueing from exception"
+      
       Pusher.trigger("private-game-#{@online_game.id}", 'remote_update_error', e.message)
     else
       p "turn"
