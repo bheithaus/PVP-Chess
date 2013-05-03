@@ -10,7 +10,77 @@ CH.Views.PlayGame = Backbone.View.extend({
 		
 		// callbacks
 		this.installRemoteUpdateCallbacks();
+		this.setupVoiceHandler();
+	},
+	
+	setupVoiceHandler: function() {
+		var that = this;
 		
+		window.makeVoiceMove = function (event) {
+		    var speech = $("#search").val();
+  			
+			console.log("heres your voice input");
+		    console.log(speech);
+			
+			that.handleVoiceMove(speech);
+			
+		};
+	},
+	
+	handleVoiceMove: function(speech) {
+		console.log(typeof(speech))
+		var moves = speech.split(" "),
+			from, to;
+		
+		if (moves.length == 2) {
+			from = moves[0];
+			  to = moves[2];
+			moves = this.cleanVoiceMoves([moves[0], moves[2]]);
+		} else {
+			moves = this.cleanVoiceMoves([speech.slice(0,2), speech.slice(2)]);
+		}
+		
+		this.tryVoiceMove(moves);
+		console.log(moves);
+	},
+	
+	tryVoiceMove: function(moves) {
+		if (this.validVoiceMoves(moves)) {
+			this.model.from = moves[0];
+			this.model.to = moves[1];
+			this.model.mover_id = CH.Store.currentUser.id;
+			
+			this.sendMove();
+		} else {
+			this.errorAlert("Sorry, that didn't work, voice input must be of the format" +
+							" '5451', try again!" );
+		}
+	},
+	
+	validVoiceMoves: function(moves) {
+		return _(moves).every(function(move) {
+			return _(move).every(function(idx) {
+				return idx < 8 && idx >= 0 
+			});
+		});
+	},
+	
+	cleanVoiceMoves: function(movesStrings) {
+		var o, m;
+		
+		console.log(movesStrings);
+		return _(movesStrings).map(function(moveString) {
+			return _(moveString.split("")).map(function(idxString, i) {
+				// if (this.invert) {
+	// 				o = 8;
+	// 				m = -1;
+	// 			} else {
+	// 				o = 0;
+	// 				m = 1;
+	// 			}
+				return (parseInt(idxString) - 1);
+			});
+		});
 	},
 	
 	setupCanvas: function(options) {
@@ -222,6 +292,19 @@ CH.Views.PlayGame = Backbone.View.extend({
 		return this.model.get("parsed_board")[pos[0]][pos[1]] != "_";
 	},
 	
+	sendMove: function() {
+		this.model.save({
+			success:function(model) {
+				that.$("#search").val("");
+				that.toggleCanvasClickListener();
+				console.log(model);
+			},
+			error: function(model) {
+			
+			}
+		});
+	},	
+	
 	click: function(e) {
 		//o and m are the inverters
 		var o, m,
@@ -250,16 +333,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 		} else {
 			this.model.to = [y, x];
 			this.model.mover_id = CH.Store.currentUser.id;
-			this.model.save({
-				success:function(model) {
-					that.toggleCanvasClickListener();
-					console.log(model);
-				},
-				error: function(model) {
-					
-				}
-			});
-			that.clicks = 0;
+			this.sendMove();
+
+			this.clicks = 0;
 			
 			console.log("from");
 			console.log(this.model.from);
@@ -295,10 +371,14 @@ CH.Views.PlayGame = Backbone.View.extend({
 		
 		var chatView = new CH.Views.Chat.InGame({ gameChannel: this.gameChannel });
 		
-		this.$el.append(statsView.render().$el);				
-
+		this.$el.append(statsView.render().$el);
+		
 		// this.$el.html(statsView.render().$el);
 		this.$el.append(this.canvas);
+
+		//voice handler
+		this.$el.append($('<input type="search" id="search" name="q" x-webkit-speech speech required onspeechchange="makeVoiceMove();" onwebkitspeechchange="makeVoiceMove();" size=100>'));
+		
 		this.$el.append(chatView.render().$el);
 		
 		this.redrawBoard();
@@ -359,41 +439,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 	    ctx.fillRect(o - m * (j*length/8), o - m * (i*length/8), length/8, length/8);
 		ctx.globalAlpha = 1;
 	},
-		// 
-	// unHighlightSquare: function(sq) {
-	// 	var o, m,
-	// 		i = sq[0],
-	// 		j = sq[1],
-	// 		ctx = this.ctx,
-	// 		board = this.model.get("parsed_board");
-	// 		length = this.sideLength;
-	// 		
-	// 	if (this.invert) {
-	// 		o = this.sideLength - 58;
-	// 		m = 1;
-	// 	} else {
-	// 		o = 0;
-	// 		m = -1;
-	// 	}
-	// 	ctx.globalAlpha = 0.2;
-	// 	
-	//     ctx.fillStyle = "rgb(49,92,235)";
-	// 	
-	//     ctx.fillRect(j*length/8, i*length/8, length/8, length/8);
-	// 	ctx.globalAlpha = 1;
-	// },
-	// 
-	// squareColor: function(sq) {
-	// 	var o, m,
-	// 		length = this.sideLength;
-	// 	if (this.invert) {
-	// 		o = this.sideLength - 58;
-	// 		m = 1;
-	// 	} else {
-	// 		o = 0;
-	// 		m = -1;
-	// 	}
-	// },
 	
 	drawBlankBoard: function() {
 		var ctx = this.ctx,
@@ -401,9 +446,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 
  		ctx.fillStyle = "#FFFFFF";
         ctx.clearRect(0, 0, length, length);
-	    ctx.fillStyle = this.brownRad();//"rgb(74,74,74)";
+	    ctx.fillStyle = this.brownRad(); //"rgb(74,74,74)";
 	    ctx.fillRect(0, 0, length, length);
-	    ctx.fillStyle = this.whiteRad();//"rgb(235,235,235)";
+	    ctx.fillStyle = this.whiteRad(); //"rgb(235,235,235)";
 		_(8).times(function(i) {
 			_(4).times(function(j) {
 				offset = i % 2 == 0 ? 0 : length/8;
