@@ -91,7 +91,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 	     discussion = this.$("#discussion");
 		
 		this.gameChannel.bind('client-chat', function(chat) {
-			discussion.append('<li>' + chat.text + '</li>');
+			discussion.append('<li class="you">' + chat.text + '</li>');
 		});
 	},
 	
@@ -105,7 +105,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 				var triggered = channel.trigger('client-chat', { text: chat });
 				setTimeout(function() {
 					if (triggered) {
-						discussion.append('<li>' + chat + '</li>');
+						discussion.append('<li class="me">' + chat + '</li>');
 					}
 				}, 300);
 				input.val("");
@@ -321,7 +321,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		
 		this.$el.append(statsView.render().$el);				
 
-		
 		// this.$el.html(statsView.render().$el);
 		this.$el.append(this.canvas);
 		this.$el.append(chatView.render().$el);

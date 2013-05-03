@@ -1,7 +1,7 @@
 CH.Views.Game = Backbone.View.extend({
 	initialize: function(options) {
 		var that = this;
-		console.log(options);
+		
 		that.gameID = options.gameID;
 		that.collection = options.collection;
 
@@ -10,8 +10,7 @@ CH.Views.Game = Backbone.View.extend({
 				if (that.gameID) {
 					that.loadGameByRoute();
 				} else {
-					var chooserButton = $("<button id='game-chooser'>Choose a Game</button>")
-					that.$el.prepend(chooserButton);
+					that.gameChooser();
 				}
 			}
 		});
@@ -30,8 +29,6 @@ CH.Views.Game = Backbone.View.extend({
 			that.$el.html(that.currentView.render().$el);
 		}
 		
-		//that.$el.prepend(that.newGameButton.render().$el);
-		
 		return that;
 	},
 	
@@ -40,11 +37,8 @@ CH.Views.Game = Backbone.View.extend({
 		
 		that.game = that.collection.findWhere({
 			id: that.gameID
-		});
-		
-		console.log(that.game);
-		
-		this.playGame({
+		});		
+		that.playGame({
 			model: that.game
 		});		
 	},
@@ -59,7 +53,7 @@ CH.Views.Game = Backbone.View.extend({
 	
 	playGame: function(options) {
 		var game;
-		console.log(options);
+		
 		if (options.target) {
 			var id = $(options.target).data("game-id");
 			game = this.collection.findWhere({
@@ -69,22 +63,12 @@ CH.Views.Game = Backbone.View.extend({
 		} else {
 			console.log("should be loading a game!!");
 			game = options.model;
-		}
-		
-		console.log(options.model);
-		
+		}		
 		this.currentView = new CH.Views.PlayGame({
 			model: game,
 			$canvas: $('<canvas id="chess-game" width="600" height="600">Chess Game</canvas>')
 		});
 		
 		this.render();
-	},
-	
-	newGame: function() {
-		console.log("maybe switch to the new game!");
-		setTimeout(function(){
-			console.log(that.newGame);
-		}, 3000);
 	}
 });

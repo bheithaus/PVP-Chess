@@ -9,8 +9,18 @@ body {
 
 .text-bg {
 	text-align: center;
-	opacity: .8;
+	opacity: .9;
 	background-color: #E1E7FA;
+	margin: 15px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.white-bg {
+	text-align: center;
+	opacity: .8;
+	padding: 10px;
+	background-color: #FAFAFA;
 	margin: 15px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -19,7 +29,18 @@ body {
 #in-game-chat {
 	float: left;
 	margin-left: 20px;
+	font-size: large;
+	
+	li.me {
+		color: #1B118A;
+	}
+
+	li.you {
+		color: #5C0B06;
+	}
 }
+
+
 
 br {
 	clear: both;

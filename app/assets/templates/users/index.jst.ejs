@@ -3,7 +3,7 @@
 </div>
 <div class="well span6">
 	<h2>Online</h2>
-	<ul style="list-style:none;">
+	<ul class="unstyled">
 
 	<% var onlineUserIDs = []; %>
 
@@ -22,7 +22,7 @@
 	</ul>
 
 	<h2>Offline</h2>
-	<ul style="list-style:none;">
+	<ul class="unstyled">
 
 	<% offlineUsers.each(function (user) { %>
 		<% if (user.get("id") != CH.Store.currentUser.id && onlineUserIDs.indexOf(user.get("id")) == -1 ) { %>
