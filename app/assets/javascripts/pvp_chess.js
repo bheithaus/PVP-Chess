@@ -23,25 +23,43 @@ window.CH = {
 			CH.pusher = new Pusher('2bfd0a96d75cfe730e81');
 			//join presence channel for online users
 			var presenceChannel = CH.pusher.subscribe('presence-channel');
-			presenceChannel.bind('pusher:subscription_succeeded', function() {
-				var me = presenceChannel.members.me;
-				var userId = me.id;
-				var userInfo = me.info;
-				console.log(presenceChannel.members.count);
-	  			presenceChannel.members.each(function(member) {
+			presenceChannel.bind('pusher:subscription_succeeded', function(member_list) {
+				// var me = presenceChannel.members.me;
+// 				var userId = me.id;
+// 				var userInfo = me.info;
+// 				console.log(presenceChannel.members.count);
+				console.log(member_list);
+	  			_(member_list._members_map).each(function(member) {
 	  						  		  			console.log(member);
-	  						  		  		  CH.Store.onlineUsers.add(CH.Store.users.findWhere({ id: parseInt(member.id) }));
+	  						  		  		  CH.Store.onlineUsers.add(CH.Store.users.findWhere({ email: member.email }));
   		  		});
+				console.log(CH.Store.onlineUsers);
+				
 			});
+			
 			presenceChannel.bind('pusher:member_removed', function(member) {
-			  CH.Store.onlineUsers.remove(parseInt(member.id));
+				console.log("setting remove timeout");
+				var memberID = member.id,
+				timeoutID = setTimeout(function() {
+					 console.log("removing sucka");
+				  	 CH.Store.onlineUsers.remove(parseInt(member.id));
+				}, 4000);
+				
+				var reAddedCallback = function(member) {
+					presenceChannel.unbind('pusher:member_added');
+					if (member.id == memberID) {
+						console.log("clearingTimout");
+						clearTimeout(timeoutID);
+					}
+				};
+				
+				presenceChannel.bind('pusher:member_added', reAddedCallback);
 			});
 			
 			//when logged in bind to private channel for contacting this user only
 			this.bindUserChannel();
-		} else {
-			console.log('yer not signed in');
 		}
+		
 		that.landingPage($content);
 		
 		this.router = new CH.Routers.ChessRouter($content);
