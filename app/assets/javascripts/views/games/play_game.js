@@ -381,13 +381,8 @@ CH.Views.PlayGame = Backbone.View.extend({
 		var voiceView = new CH.Views.VoiceInput();
 		
 		this.$el.append(statsView.render().$el);
-		
-		// this.$el.html(statsView.render().$el);
 		this.$el.append(this.canvas);
-
-		//voice handler
 		this.$el.append(voiceView.render().$el);
-		
 		this.$el.append(chatView.render().$el);
 		
 		this.redrawBoard();
@@ -455,7 +450,17 @@ CH.Views.PlayGame = Backbone.View.extend({
 			    ctx = this.ctx,
 			 length = this.sideLength,
 		 whiteStyle = this.whiteRad();
-
+		
+		if (that.showNumbers) {
+			var o, m, a, b;
+			if (that.invert) {
+				o = 9;
+				m = 1;
+			} else {
+				o = 0;
+				m = -1;
+			}
+		}
  		ctx.fillStyle = "#FFFFFF";
         ctx.clearRect(0, 0, length, length);
 	    ctx.fillStyle = this.brownRad(); //"rgb(74,74,74)";
@@ -470,13 +475,18 @@ CH.Views.PlayGame = Backbone.View.extend({
 					ctx.fillStyle = whiteStyle;
 				    ctx.fillRect(x, y, length/8, length/8);
 				}
-				console.log(this.showNumbers)
+
 				if (that.showNumbers) {
 					ctx.lineWidth = 1;
 					ctx.fillStyle = "#E02B4C";
 					ctx.lineStyle = "#ffff00";
 					ctx.font = "20px sans-serif";
-					ctx.fillText((i + 1) + "" + (j+1), x+5, y+20);
+					
+					a = o - m * (i + 1);
+					console.log(a)
+					b = o - m * (j + 1);
+					console.log(b)
+					ctx.fillText(a + "" + b, x+5, y+20);
 				}
 			});
 		});

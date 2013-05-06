@@ -13,13 +13,19 @@
 				<li id='home' class="active">
 					<a href='#home'>Home</a>
 				</li>
+			    <li class="divider-vertical"></li>
+				
 				<li id='games' class="#">
 					<a href='#games'>Chess</a>
 				</li>
+			    <li class="divider-vertical"></li>
+				
 				<li id='players' class="#">
 					<a href='#players'>Players</a>
 				</li>
+				
 				<% if ( CH.Store.currentUser ) { %>
+				    <li class="divider-vertical"></li>
 					<li class="#">
 						<a id="sign-out" href="#">Sign Out</a>
 					</li>
