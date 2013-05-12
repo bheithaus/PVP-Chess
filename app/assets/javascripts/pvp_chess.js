@@ -20,7 +20,10 @@ window.CH = {
 				id: currentUserData.id
 			});
 			CH.Store.currentUser.get("games").fetch();
+
+			//pusher realtime connection object
 			CH.pusher = new Pusher('2bfd0a96d75cfe730e81');
+			
 			//join presence channel for online users
 			var presenceChannel = CH.pusher.subscribe('presence-channel');
 			presenceChannel.bind('pusher:subscription_succeeded', function(member_list) {
