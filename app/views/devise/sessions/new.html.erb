@@ -1,6 +1,7 @@
 <h1 class="pull-right">PVP Chess</h1>
 <br>
 
+
 <div class="my-form span4">
 	<h2>Sign in</h2>
 
@@ -15,10 +16,11 @@
 	    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
 	  <% end -%>
 
-	  <div><%= f.submit "Sign in", class: "btn" %></div><br>
+	  <div><%= f.submit "Sign in", class: "btn" %></div>
 	<% end %>
 	
-  	<%= button_to "Guest Sign In", "/guest_access", class: "btn" %>
-
+  	<%= button_to "Guest Sign In", "/guest_access", class: "btn btn-success" %>
+	<%= link_to image_tag("facebook-login.png", size: "200x50"), omniauth_authorize_path(resource_name, :facebook) %><br>
 	<%= render "devise/shared/links" %>
+	
 </div>

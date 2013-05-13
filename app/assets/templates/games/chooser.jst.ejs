@@ -3,14 +3,18 @@
 </div>
 <div class="white-bg span4">
 	<ul id="chooser" class="unstyled">
-		<% games.each(function(game) { %>
-			<li class="#">
-				<a id="sign-out" data-game-id="<%= game.id %>"><%= game.name || "Game " + game.id %></a>
-				<% var opponentID = (game.player_white_id == CH.Store.currentUser.ID) ?
-																game.player_black_id : game.player_white_id %>
-				<strong>vs. </strong>
-					 <%= CH.Store.users.findWhere({ id: opponentID }).escape("email") %>
-			</li>
-		<% }); %>
+		<% if (games.length) { %>
+			<% games.each(function(game) { %>
+				<li class="#">
+					<a id="sign-out" data-game-id="<%= game.id %>"><%= game.name || "Game " + game.id %></a>
+					<% var opponentID = (game.player_white_id == CH.Store.currentUser.ID) ?
+																	game.player_black_id : game.player_white_id %>
+					<strong>vs. </strong>
+						 <%= CH.Store.users.findWhere({ id: opponentID }).escape("email") %>
+				</li>
+			<% }); %>
+		<% } else { %>
+			<p>No games started, <a href="/#players"> go invite a player</a></p>
+		<% } %>
 	</ul>
 </div>
