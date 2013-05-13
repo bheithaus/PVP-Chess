@@ -5,7 +5,7 @@
 	$(function() {
 		var $navbar = $("#navbar"),
 			$content = $("#content"),
-			currentUserData = <%= current_user.to_json.html_safe %>,
+			currentUserData = <%= current_or_guest_user.to_json.html_safe %>,
 			usersData = <%= @users.to_json.html_safe %>;
 		
 		CH.init(

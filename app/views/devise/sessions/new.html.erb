@@ -16,8 +16,9 @@
 	  <% end -%>
 
 	  <div><%= f.submit "Sign in", class: "btn" %></div><br>
-	  
 	<% end %>
+	
+  	<%= button_to "Guest Sign In", "/guest_access", class: "btn" %>
 
 	<%= render "devise/shared/links" %>
 </div>

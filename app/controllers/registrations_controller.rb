@@ -1,6 +1,11 @@
 class RegistrationsController < Devise::RegistrationsController
   include StaticPagesHelper
 
+  def create_guest
+    create_guest_user
+    redirect_to root_url
+  end
+
   def new
     make_secret
     

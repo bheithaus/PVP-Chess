@@ -18,7 +18,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	toggleShowNumbers: function() {
 		this.showNumbers = !this.showNumbers;
-		console.log(this.showNumbers);
+		// console.log(this.showNumbers);
 		this.redrawBoard();
 	},
 	
@@ -28,15 +28,15 @@ CH.Views.PlayGame = Backbone.View.extend({
 		window.makeVoiceMove = function (event) {
 		    var speech = $("#search").val();
   			
-			console.log("heres your voice input");
-		    console.log(speech);
+			// console.log("heres your voice input");
+// 		    console.log(speech);
 			
 			that.handleVoiceMove(speech);
 		};
 	},
 	
 	handleVoiceMove: function(speech) {
-		console.log(typeof(speech))
+		// console.log(typeof(speech))
 		var moves = speech.split(" "),
 			from, to;
 		
@@ -49,7 +49,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 		}
 		
 		this.tryVoiceMove(moves);
-		console.log(moves);
+		// console.log(moves);
 	},
 	
 	tryVoiceMove: function(moves) {
@@ -76,16 +76,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 	cleanVoiceMoves: function(movesStrings) {
 		var o, m;
 		
-		console.log(movesStrings);
+		// console.log(movesStrings);
 		return _(movesStrings).map(function(moveString) {
 			return _(moveString.split("")).map(function(idxString, i) {
-				// if (this.invert) {
-	// 				o = 8;
-	// 				m = -1;
-	// 			} else {
-	// 				o = 0;
-	// 				m = 1;
-	// 			}
 				return (parseInt(idxString) - 1);
 			});
 		});
@@ -281,16 +274,16 @@ CH.Views.PlayGame = Backbone.View.extend({
 	
 	toggleCanvasClickListener: function() {
 		var clickable = this.myTurn();
-		console.log(clickable);
+		// console.log(clickable);
 		if (!this.clickCallback) {
 			this.clickCallback = this.click.bind(this);
 		}
 		
 		if (clickable) {
-			console.log("turn on canvas clickable");
+			// console.log("turn on canvas clickable");
 			this.canvas.addEventListener('click', this.clickCallback, false);
 		} else {
-			console.log("turn off canvas clickable");
+			// console.log("turn off canvas clickable");
 			this.canvas.removeEventListener('click', this.clickCallback);
 		}
 		this.toggleWaiting();
@@ -345,12 +338,12 @@ CH.Views.PlayGame = Backbone.View.extend({
 
 			this.clicks = 0;
 			
-			console.log("from");
-			console.log(this.model.from);
-			console.log("to");
-			console.log(this.model.to);
+			// console.log("from");
+	// 		console.log(this.model.from);
+	// 		console.log("to");
+	// 		console.log(this.model.to);
 		}
-	    console.log("Mouse X: " + mouse.X + " mouse Y: " + mouse.Y);
+	    // console.log("Mouse X: " + mouse.X + " mouse Y: " + mouse.Y);
 	},
 	
 	getCursorPosition: function(canvas, event) {
@@ -411,14 +404,6 @@ CH.Views.PlayGame = Backbone.View.extend({
 		//[i, j]
 		fromColor = this.squareColor(from)
 		toColor = this.squareColor(to)
-		
-		
-		// calculate color of squares
-		
-		// repeatedly draw semi transparent square over the to square
-		// using...
-		// ctx.globalAlpha=0.2;
-		// move from piece in a straight line to to
 	},
 	
 	highlightSquare: function(sq) {
@@ -483,9 +468,9 @@ CH.Views.PlayGame = Backbone.View.extend({
 					ctx.font = "20px sans-serif";
 					
 					a = o - m * (i + 1);
-					console.log(a)
+					// console.log(a)
 					b = o - m * (j + 1);
-					console.log(b)
+					// console.log(b)
 					ctx.fillText(a + "" + b, x+5, y+20);
 				}
 			});
@@ -508,7 +493,7 @@ CH.Views.PlayGame = Backbone.View.extend({
 						if (CH.Store.loadedImgsCount == 12) {
 							that.drawPieces();
 						} else {
-							console.log(CH.Store.loadedImgsCount)
+							// console.log(CH.Store.loadedImgsCount)
 						}
 					}
 				});

@@ -7,9 +7,11 @@ Capcap::Application.routes.draw do
                               } do
       get '/sign_up' => 'registrations#new'
       post '/sign_up' => 'registrations#create'
+      post '/guest_access' => 'registrations#create_guest'
   end
   
   post '/guess' => 'static_pages#match_secret'
+  
   post '/pusher/auth' => 'pusher#auth'
   
   resources :online_games
